@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بصيرة | الدخول</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --deep: #1a0a2e;
+  --purple: #4a1c6b;
+  --rose: #c44b7a;
+  --gold: #f4d03f;
+  --text-dim: rgba(255,255,255,0.6);
+  --field-bg: rgba(255,255,255,0.07);
+  --field-border: rgba(255,255,255,0.15);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  direction: rtl;
+  background: var(--deep);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-x: hidden;
+}
+
+@keyframes aurora-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes eye-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.1); }
+}
+
+.aurora-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(-45deg, #1a0a2e, #2d1b4e, #4a1c6b, #8b2d6e, #c44b7a, #6b2d5e, #4a1c6b, #1a0a2e);
+  background-size: 400% 400%;
+  animation: aurora-shift 15s ease infinite;
+}
+
+.card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 420px;
+  background: rgba(26,10,46,0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(244,208,63,0.2);
+  border-radius: 20px;
+  padding: 36px 32px;
+}
+
+.logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 26px; }
+.eye-wrap { width: 76px; height: 76px; animation: float 4s ease-in-out infinite; }
+.eye-wrap svg { animation: eye-blink 4s ease-in-out infinite; }
+.slogan { color: var(--gold); font-size: 18px; font-weight: 500; text-shadow: 0 0 16px rgba(244,208,63,0.35); }
+.slogan b { color: #fff; }
+
+.tabs { display: flex; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+.tab {
+  flex: 1; padding: 10px; border: none; border-radius: 9px;
+  background: transparent; color: var(--text-dim);
+  font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s;
+}
+.tab.active { background: linear-gradient(135deg, var(--purple), var(--rose)); color: #fff; }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; }
+.field input {
+  width: 100%; padding: 12px 14px;
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  border-radius: 10px;
+  color: #fff; font-family: inherit; font-size: 14px;
+  transition: border-color 0.2s;
+}
+.field input:focus { outline: none; border-color: rgba(244,208,63,0.5); }
+.field input::placeholder { color: rgba(255,255,255,0.3); }
+
+.btn-main {
+  width: 100%; padding: 13px; margin-top: 6px;
+  border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--rose), var(--gold));
+  background-size: 200% 200%;
+  color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(74,28,107,0.5); }
+.btn-main:disabled { opacity: 0.5; cursor: wait; transform: none; }
+
+.msg {
+  display: none; margin-top: 14px; padding: 11px 14px;
+  border-radius: 10px; font-size: 13px; line-height: 1.6;
+}
+.msg.err { display: block; background: rgba(220,80,90,0.15); border: 1px solid rgba(220,80,90,0.4); color: #ffb0b8; }
+.msg.ok  { display: block; background: rgba(80,200,140,0.12); border: 1px solid rgba(80,200,140,0.35); color: #9fe8c5; }
+
+.hidden { display: none; }
+.divider { height: 1px; background: rgba(255,255,255,0.08); margin: 18px 0 14px; }
+.hint { font-size: 12px; color: var(--text-dim); text-align: center; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div class="aurora-bg"></div>
+
+<div class="card">
+
+  <div class="logo">
+    <div class="eye-wrap">
+      <svg viewBox="0 0 120 120" width="76" height="76" fill="none">
+        <ellipse cx="60" cy="60" rx="55" ry="35" stroke="#f4d03f" stroke-width="3" fill="rgba(244,208,63,0.08)" />
+        <circle cx="60" cy="60" r="22" fill="url(#irisGrad)" />
+        <circle cx="60" cy="60" r="10" fill="#1a0a2e" />
+        <circle cx="52" cy="52" r="4" fill="#fff" opacity="0.8" />
+        <defs>
+          <radialGradient id="irisGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#4a1c6b" />
+            <stop offset="50%" stop-color="#c44b7a" />
+            <stop offset="100%" stop-color="#f4d03f" />
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="slogan">نرى ما لا <b>تراه</b></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabLogin">تسجيل الدخول</button>
+    <button class="tab" id="tabRegister">حساب جديد</button>
+  </div>
+
+  <!-- ===== تسجيل الدخول ===== -->
+  <form id="loginForm">
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-dim);cursor:pointer;margin-bottom:4px">
+      <input type="checkbox" id="rememberEmail" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer">
+      تذكّر بريدي على هذا الجهاز
+    </label>
+    <button type="submit" class="btn-main" id="loginBtn">دخول</button>
+  </form>
+
+  <!-- ===== حساب جديد ===== -->
+  <form id="registerForm" class="hidden">
+    <div class="field">
+      <label>اسم المتجر / النشاط</label>
+      <input type="text" id="regMerchant" placeholder="مثال: متجر النور" required>
+    </div>
+    <div class="field">
+      <label>اسمك</label>
+      <input type="text" id="regOwner" placeholder="الاسم الكامل" required>
+    </div>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="regEmail" placeholder="you@example.com" required autocomplete="email">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="regPassword" placeholder="٨ أحرف على الأقل" required minlength="8" autocomplete="new-password">
+    </div>
+    <button type="submit" class="btn-main" id="regBtn">إنشاء الحساب</button>
+  </form>
+
+  <!-- ===== إكمال التسجيل (مستخدم دخل بدون متجر) ===== -->
+  <form id="completeForm" class="hidden">
+    <div class="hint" style="margin-bottom:16px">خطوة أخيرة! ✨<br>حسابك جاهز — بس ناقص نكوّن متجرك.</div>
+    <div class="field">
+      <label>اسم المتجر / النشاط</label>
+      <input type="text" id="cmpMerchant" placeholder="مثال: متجر النور" required>
+    </div>
+    <div class="field">
+      <label>اسمك</label>
+      <input type="text" id="cmpOwner" placeholder="الاسم الكامل" required>
+    </div>
+    <button type="submit" class="btn-main" id="cmpBtn">كوّن متجري</button>
+  </form>
+
+  <div class="msg" id="msg"></div>
+
+  <div class="divider"></div>
+  <div class="hint">بصيرة · منصة الذكاء لتجارتك<br>بإنشائك حساباً أنت توافق على شروط الاستخدام</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="basira-api.js"></script>
+<script>
+/* ================= إعداد الربط ================= */
+BasiraAPI.init(
+  'https://ziywbwmsbubzelecvcrr.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppeXdid21zYnViemVsZWN2Y3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTE0OTYsImV4cCI6MjEwMDU2NzQ5Nn0.QQ4Bx6QTNz8agNvEMyF9LmYYm_O5JLF3jg2AJ3nQJFQ'
+);
+
+/* ================= عناصر الواجهة ================= */
+const tabLogin = document.getElementById('tabLogin');
+const tabRegister = document.getElementById('tabRegister');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const msg = document.getElementById('msg');
+
+function show(type, text) { msg.className = 'msg ' + type; msg.textContent = text; }
+function clearMsg() { msg.className = 'msg'; msg.textContent = ''; }
+
+/* ترجمة أخطاء شائعة للعربي */
+function arabicError(e) {
+  const m = (e && e.message) || '';
+  if (m.includes('Invalid login credentials')) return 'البريد أو كلمة المرور غير صحيحة.';
+  if (m.includes('already registered') || m.includes('already been registered')) return 'هذا البريد مسجّل مسبقاً — جرّب تسجيل الدخول.';
+  if (m.includes('Password should be')) return 'كلمة المرور قصيرة — ٨ أحرف على الأقل.';
+  if (m.includes('valid email')) return 'اكتب بريداً إلكترونياً صحيحاً.';
+  if (m.includes('ALREADY_MEMBER')) return 'هذا الحساب مرتبط بمتجر مسبقاً — سجّل دخول.';
+  if (m.includes('rate limit') || m.includes('Too many')) return 'محاولات كثيرة — انتظر دقيقة وجرّب من جديد.';
+  if (m.includes('Failed to fetch')) return 'تعذّر الاتصال — تأكد من الإنترنت وحاول من جديد.';
+  return 'حدث خطأ: ' + m;
+}
+
+/* ================= التبويبات ================= */
+tabLogin.addEventListener('click', () => {
+  tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+  loginForm.classList.remove('hidden'); registerForm.classList.add('hidden');
+  clearMsg();
+});
+tabRegister.addEventListener('click', () => {
+  tabRegister.classList.add('active'); tabLogin.classList.remove('active');
+  registerForm.classList.remove('hidden'); loginForm.classList.add('hidden');
+  clearMsg();
+});
+
+/* ================= تسجيل الدخول ================= */
+/* استرجع البريد المحفوظ إن وجد */
+(() => {
+  const saved = localStorage.getItem('basira_email');
+  if (saved) {
+    document.getElementById('loginEmail').value = saved;
+    document.getElementById('rememberEmail').checked = true;
+    document.getElementById('loginPassword').focus();
+  }
+})();
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault(); clearMsg();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الدخول...';
+  /* احفظ أو امسح البريد حسب الاختيار */
+  const email = document.getElementById('loginEmail').value.trim();
+  if (document.getElementById('rememberEmail').checked) localStorage.setItem('basira_email', email);
+  else localStorage.removeItem('basira_email');
+  try {
+    const ctx = await BasiraAPI.auth.login(
+      email,
+      document.getElementById('loginPassword').value
+    );
+    if (ctx && ctx.membership) {
+      show('ok', 'أهلاً ' + ctx.membership.member_name + '! جارٍ تحويلك...');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+    } else {
+      /* مستخدم بدون متجر (التسجيل انقطع) — أظهر شاشة الإكمال */
+      loginForm.classList.add('hidden');
+      registerForm.classList.add('hidden');
+      document.querySelector('.tabs').classList.add('hidden');
+      document.getElementById('completeForm').classList.remove('hidden');
+      clearMsg();
+    }
+  } catch (err) {
+    show('err', arabicError(err));
+  } finally {
+    btn.disabled = false; btn.textContent = 'دخول';
+  }
+});
+
+/* ================= حساب جديد ================= */
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault(); clearMsg();
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الإنشاء...';
+  try {
+    const res = await BasiraAPI.auth.register({
+      email: document.getElementById('regEmail').value.trim(),
+      password: document.getElementById('regPassword').value,
+      merchantName: document.getElementById('regMerchant').value.trim(),
+      ownerName: document.getElementById('regOwner').value.trim()
+    });
+    if (res.needsEmailConfirm) {
+      show('ok', 'تم إنشاء الحساب! افتح بريدك وأكّد التسجيل من الرابط المرسل، ثم ارجع وسجّل دخول.');
+    } else {
+      show('ok', 'تم إنشاء متجرك بنجاح! جارٍ تحويلك...');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+    }
+  } catch (err) {
+    show('err', arabicError(err));
+  } finally {
+    btn.disabled = false; btn.textContent = 'إنشاء الحساب';
+  }
+});
+
+/* ================= إكمال التسجيل ================= */
+document.getElementById('completeForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); clearMsg();
+  const btn = document.getElementById('cmpBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ التكوين...';
+  try {
+    await BasiraAPI.auth.completeSignup({
+      merchantName: document.getElementById('cmpMerchant').value.trim(),
+      ownerName: document.getElementById('cmpOwner').value.trim()
+    });
+    show('ok', 'تم تكوين متجرك بنجاح! جارٍ تحويلك...');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+  } catch (err) {
+    show('err', arabicError(err));
+  } finally {
+    btn.disabled = false; btn.textContent = 'كوّن متجري';
+  }
+});
+
+/* ================= جلسة سابقة؟ حوّل مباشرة ================= */
+(async () => {
+  try {
+    const ctx = await BasiraAPI.auth.restoreSession();
+    if (ctx && ctx.membership) {
+      window.location.href = 'dashboard.html';
+    } else if (ctx && ctx.authenticated) {
+      /* جلسة موجودة بس بدون متجر — أظهر شاشة الإكمال مباشرة */
+      loginForm.classList.add('hidden');
+      registerForm.classList.add('hidden');
+      document.querySelector('.tabs').classList.add('hidden');
+      document.getElementById('completeForm').classList.remove('hidden');
+    }
+  } catch (_) { /* لا جلسة — ابقَ هنا */ }
+})();
+</script>
+</body>
+</html>
