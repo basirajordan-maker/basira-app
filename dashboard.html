@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بصيرة | لوحة التحكم</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --deep: #14081f;
+  --panel: #1e1030;
+  --panel2: #251439;
+  --border: rgba(255,255,255,0.09);
+  --border-gold: rgba(244,208,63,0.25);
+  --purple: #4a1c6b;
+  --rose: #c44b7a;
+  --gold: #f4d03f;
+  --text: #ffffff;
+  --dim: rgba(255,255,255,0.6);
+  --dim2: rgba(255,255,255,0.38);
+  --green: #4fc79b;
+  --red: #e06b7a;
+}
+
+/* ===== الثيم الفاتح (محايد نظيف) ===== */
+body.light {
+  --deep: #eceef1;
+  --panel: #ffffff;
+  --panel2: #f1f2f4;
+  --border: rgba(0,0,0,0.16);
+  --border-gold: rgba(0,0,0,0.28);
+  --purple: #1a1a1a;
+  --rose: #3d3d3d;
+  --gold: #16a34a;
+  --text: #17181a;
+  --dim: rgba(0,0,0,0.58);
+  --dim2: rgba(0,0,0,0.4);
+  --green: #16a34a;
+  --red: #dc4c5e;
+}
+body.light .kpi, body.light .prod-card, body.light .ord-card {
+  border-color: rgba(0,0,0,0.14);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+body.light .modal { box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+body.light .sidebar { border-inline-start-color: rgba(0,0,0,0.12); }
+body.light .brand, body.light .side-foot, body.light .pc-vars,
+body.light .pc-foot, body.light .oc-side { border-color: rgba(0,0,0,0.1); }
+body.light .welcome {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.09);
+}
+body.light .nav-item.active {
+  background: #17181a;
+  color: #ffffff;
+}
+body.light .btn-add, body.light .btn-save, body.light .btn-main {
+  background: #17181a;
+}
+body.light .avatar { background: #17181a; }
+body.light .brand .sub { color: var(--dim2); }
+body.light .swatch-pop { box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+body.light .modal-bg { background: rgba(0,0,0,0.35); }
+
+/* ===== زر تبديل الثيم ===== */
+.theme-toggle {
+  width: 100%; margin-bottom: 8px; padding: 9px;
+  background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--dim);
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--border-gold); }
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  direction: rtl;
+  background: var(--deep);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ===== شاشة التحميل ===== */
+#loader {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--deep);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+}
+@keyframes eye-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
+#loader svg { animation: eye-blink 2.5s ease-in-out infinite; }
+#loader .t { color: var(--dim); font-size: 14px; }
+
+/* ===== التخطيط ===== */
+.app { display: none; min-height: 100vh; }
+.app.ready { display: flex; }
+
+/* ===== القائمة الجانبية ===== */
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--panel);
+  border-inline-start: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh;
+}
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.brand .name { font-weight: 800; font-size: 17px; }
+.brand .sub { font-size: 10.5px; color: var(--gold); }
+
+.nav-group { font-size: 10.5px; font-weight: 700; color: var(--dim2); padding: 12px 10px 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 10px 12px; margin-bottom: 2px;
+  background: none; border: none; border-radius: 10px;
+  color: var(--dim); font-family: inherit; font-size: 13.5px; font-weight: 600;
+  cursor: pointer; text-align: right; transition: all 0.15s;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.nav-item.active { background: linear-gradient(135deg, rgba(74,28,107,0.55), rgba(196,75,122,0.3)); color: var(--text); }
+.nav-item .soon { margin-inline-start: auto; font-size: 9px; color: var(--dim2); background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 20px; }
+
+.side-foot { margin-top: auto; border-top: 1px solid var(--border); padding-top: 12px; }
+.userbox { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--rose));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; flex-shrink: 0;
+}
+.userbox .un { font-size: 13px; font-weight: 700; }
+.userbox .ur { font-size: 10.5px; color: var(--dim2); }
+.btn-logout {
+  width: 100%; margin-top: 8px; padding: 9px;
+  background: rgba(224,107,122,0.1); border: 1px solid rgba(224,107,122,0.3);
+  border-radius: 10px; color: #ffb0b8;
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-logout:hover { background: rgba(224,107,122,0.2); }
+
+/* ===== المحتوى ===== */
+.main { flex: 1; padding: 26px 30px; min-width: 0; }
+.head { margin-bottom: 22px; }
+.head h1 { font-size: 21px; font-weight: 800; }
+.head .sub { font-size: 12.5px; color: var(--dim); margin-top: 4px; }
+
+/* ===== بطاقات نظرة عامة ===== */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.kpi {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px;
+}
+.kpi .num { font-size: 26px; font-weight: 800; }
+.kpi .lbl { font-size: 12px; color: var(--dim); margin-top: 4px; }
+.kpi .ic { font-size: 18px; margin-bottom: 10px; }
+
+/* ===== بطاقة ترحيب ===== */
+.welcome {
+  background: linear-gradient(135deg, rgba(74,28,107,0.4), rgba(196,75,122,0.15));
+  border: 1px solid var(--border-gold);
+  border-radius: 16px; padding: 22px; margin-bottom: 22px;
+}
+.welcome h2 { font-size: 17px; margin-bottom: 6px; }
+.welcome p { font-size: 13px; color: var(--dim); line-height: 1.8; }
+
+/* ===== قسم فارغ (قريباً) ===== */
+.placeholder {
+  background: var(--panel); border: 1px dashed var(--border);
+  border-radius: 16px; padding: 50px 20px;
+  text-align: center; color: var(--dim2); font-size: 14px; line-height: 2;
+}
+
+.err-box {
+  background: rgba(224,107,122,0.12); border: 1px solid rgba(224,107,122,0.35);
+  border-radius: 12px; padding: 14px; color: #ffb0b8; font-size: 13px;
+  margin-bottom: 16px; display: none;
+}
+.err-box.show { display: block; }
+
+/* ===== قسم المنتجات ===== */
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+.search-box {
+  flex: 1; min-width: 200px; padding: 11px 14px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); font-family: inherit; font-size: 13.5px;
+}
+.search-box:focus { outline: none; border-color: var(--border-gold); }
+.btn-add {
+  padding: 11px 20px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--rose));
+  color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-add:hover { transform: translateY(-2px); }
+
+.prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.prod-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.pc-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.pc-name { font-weight: 800; font-size: 15px; flex: 1; }
+.pc-price { color: var(--gold); font-weight: 800; font-size: 14px; white-space: nowrap; }
+.pc-cat { font-size: 11px; color: var(--dim2); margin-top: 2px; }
+.pc-vars { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.pv-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.pv-sw { width: 14px; height: 14px; border-radius: 5px; border: 1px solid var(--border); flex-shrink: 0; }
+.pv-name { flex: 1; color: var(--dim); }
+.pv-ok { color: var(--green); font-weight: 700; }
+.pv-low { color: var(--gold); font-weight: 700; }
+.pv-out { color: var(--red); font-weight: 700; }
+.pc-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
+.pc-total { font-size: 12px; color: var(--dim); }
+.pc-actions { display: flex; gap: 6px; }
+.btn-sm {
+  padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--panel2); color: var(--dim);
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-sm:hover { color: var(--text); border-color: var(--border-gold); }
+.btn-sm.danger { color: #ffb0b8; }
+.btn-sm.danger:hover { border-color: rgba(224,107,122,0.5); }
+
+.empty-state { text-align: center; padding: 50px 20px; color: var(--dim2); font-size: 14px; line-height: 2; grid-column: 1 / -1; }
+
+/* ===== مودال المنتج ===== */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(10,4,18,0.75); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto;
+  background: var(--panel); border: 1px solid var(--border-gold);
+  border-radius: 16px; padding: 22px;
+}
+.modal h3 { font-size: 16px; margin-bottom: 16px; }
+.m-field { margin-bottom: 12px; }
+.m-field label { display: block; font-size: 12px; color: var(--dim); margin-bottom: 5px; }
+.m-field input, .m-field textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 9px;
+  color: var(--text); font-family: inherit; font-size: 13.5px;
+  resize: vertical;
+}
+.m-field input:focus, .m-field textarea:focus { outline: none; border-color: var(--border-gold); }
+.m-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vars-title { font-size: 12.5px; font-weight: 700; color: var(--dim); margin: 14px 0 8px; }
+.var-row { display: flex; gap: 6px; align-items: center; margin-bottom: 7px; }
+.var-row input[type=color] { width: 36px; height: 36px; padding: 2px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel2); cursor: pointer; flex-shrink: 0; }
+.var-row input[type=text] { flex: 1; min-width: 0; padding: 9px 10px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 12.5px; }
+.var-row input.v-stock { width: 64px; flex: none; text-align: center; }
+.var-del {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--panel2); color: var(--red); cursor: pointer; font-size: 14px;
+}
+.btn-addvar {
+  width: 100%; padding: 9px; margin-top: 4px;
+  border: 1px dashed var(--border); border-radius: 9px;
+  background: none; color: var(--dim);
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+.btn-addvar:hover { color: var(--gold); border-color: var(--border-gold); }
+.m-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.btn-ghost {
+  padding: 10px 18px; border-radius: 9px; border: 1px solid var(--border);
+  background: none; color: var(--dim);
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-save {
+  padding: 10px 22px; border: none; border-radius: 9px;
+  background: linear-gradient(135deg, var(--purple), var(--rose));
+  color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-save:disabled { opacity: 0.5; cursor: wait; }
+
+/* ===== قسم الطلبات ===== */
+.ord-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.ord-tab {
+  padding: 9px 16px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--dim);
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.ord-tab:hover { color: var(--text); border-color: var(--border-gold); }
+.ord-tab.active { background: linear-gradient(135deg, rgba(74,28,107,0.55), rgba(196,75,122,0.3)); color: var(--text); border-color: var(--border-gold); }
+.ot-n { font-size: 10.5px; background: rgba(255,255,255,0.08); padding: 1px 7px; border-radius: 20px; color: var(--dim2); }
+.ord-tab.active .ot-n { background: var(--gold); color: #241B38; }
+
+.ord-list { display: flex; flex-direction: column; gap: 10px; }
+.ord-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 15px 16px; display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+.oc-main { flex: 1; min-width: 220px; }
+.oc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.oc-cust { font-weight: 800; font-size: 14.5px; }
+.ord-badge { font-size: 10.5px; font-weight: 800; padding: 3px 10px; border-radius: 20px; }
+.os-new { color: #85b7eb; background: rgba(109,155,214,0.14); }
+.os-confirmed { color: #cfa8f5; background: rgba(155,109,214,0.16); }
+.os-delivering { color: var(--gold); background: rgba(244,208,63,0.13); }
+.os-done { color: var(--green); background: rgba(79,199,155,0.13); }
+.os-canceled { color: var(--red); background: rgba(224,107,122,0.13); }
+.os-rejected { color: #f0997b; background: rgba(216,90,48,0.14); }
+.oc-items { font-size: 12.5px; color: var(--dim); margin-bottom: 6px; line-height: 1.7; }
+.oc-meta { font-size: 11.5px; color: var(--dim2); display: flex; gap: 14px; flex-wrap: wrap; }
+.oc-side { text-align: left; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.oc-total { font-weight: 800; font-size: 16px; color: var(--gold); white-space: nowrap; }
+.oc-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* مودال طلب جديد */
+.ord-item-row { display: flex; gap: 6px; align-items: center; margin-bottom: 7px; }
+.ord-item-row select { flex: 1; min-width: 0; padding: 9px 10px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 12.5px; }
+.ord-item-row input.oi-qty { width: 60px; flex: none; text-align: center; padding: 9px 6px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 12.5px; }
+.oi-avail { font-size: 10.5px; color: var(--dim2); white-space: nowrap; min-width: 55px; text-align: center; }
+.ord-total-line { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13.5px; }
+.ord-total-line b { color: var(--gold); font-size: 16px; }
+
+/* ===== قسم المحادثات ===== */
+.conv-layout { display: grid; grid-template-columns: 300px 1fr; gap: 14px; height: calc(100vh - 160px); }
+.conv-list { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; overflow-y: auto; }
+.conv-item {
+  padding: 13px 15px; border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background 0.12s;
+}
+.conv-item:hover { background: var(--panel2); }
+.conv-item.active { background: var(--panel2); border-inline-start: 3px solid var(--gold); }
+.ci-top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.ci-name { font-weight: 700; font-size: 13.5px; flex: 1; }
+.ci-ch { font-size: 10px; }
+.ci-time { font-size: 10.5px; color: var(--dim2); }
+.ci-status { font-size: 9.5px; font-weight: 700; padding: 1px 8px; border-radius: 20px; }
+.cs-open { color: var(--green); background: rgba(79,199,155,0.14); }
+.cs-needs_human { color: var(--gold); background: rgba(244,208,63,0.14); }
+.cs-closed { color: var(--dim2); background: rgba(255,255,255,0.06); }
+
+.conv-main { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
+.conv-head { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.conv-head .ch-name { font-weight: 800; font-size: 15px; flex: 1; }
+.conv-msgs { flex: 1; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg-bubble { max-width: 72%; padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.6; position: relative; }
+.msg-customer { align-self: flex-start; background: var(--panel2); border: 1px solid var(--border); border-bottom-inline-start-radius: 4px; }
+.msg-ai { align-self: flex-end; background: linear-gradient(135deg, rgba(74,28,107,0.5), rgba(196,75,122,0.35)); border-bottom-inline-end-radius: 4px; }
+.msg-human { align-self: flex-end; background: rgba(79,199,155,0.16); border: 1px solid rgba(79,199,155,0.3); border-bottom-inline-end-radius: 4px; }
+.msg-meta { font-size: 9.5px; color: var(--dim2); margin-top: 4px; }
+.msg-sender-tag { font-size: 9px; font-weight: 700; opacity: 0.7; }
+body.light .msg-ai { background: #17181a; color: #fff; }
+
+.conv-reply { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.conv-reply input {
+  flex: 1; padding: 11px 14px; background: var(--panel2);
+  border: 1px solid var(--border); border-radius: 12px;
+  color: var(--text); font-family: inherit; font-size: 13.5px;
+}
+.conv-reply input:focus { outline: none; border-color: var(--border-gold); }
+.conv-reply button {
+  padding: 11px 20px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--purple), var(--rose));
+  color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+body.light .conv-reply button { background: #17181a; }
+.conv-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--dim2); font-size: 14px; text-align: center; line-height: 2; padding: 20px; }
+
+/* ===== قسم الإعدادات / القنوات ===== */
+.settings-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; max-width: 720px; }
+.settings-card h2 { font-size: 15px; margin-bottom: 4px; }
+.settings-card .sc-sub { font-size: 12.5px; color: var(--dim); margin-bottom: 16px; line-height: 1.7; }
+.ch-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid var(--border); }
+.ch-logo { width: 38px; height: 38px; border-radius: 10px; background: var(--panel2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ch-info { flex: 1; min-width: 0; }
+.ch-type { font-weight: 700; font-size: 13.5px; }
+.ch-handle { font-size: 11.5px; color: var(--dim2); margin-top: 1px; }
+.ch-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; cursor: pointer; border: 1px solid var(--border); background: var(--panel2); color: var(--dim); }
+.ch-toggle.on { color: var(--green); border-color: rgba(79,199,155,0.4); background: rgba(79,199,155,0.1); }
+.ch-add-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 6px; }
+.ch-add-btn {
+  display: flex; align-items: center; gap: 10px; padding: 13px;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--panel2);
+  color: var(--text); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s;
+}
+.ch-add-btn:hover { border-color: var(--border-gold); transform: translateY(-1px); }
+.ch-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.ch-add-btn .soon-tag { margin-inline-start: auto; font-size: 9px; color: var(--dim2); background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 20px; }
+
+/* ===== فريق الذكاء ===== */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.agent-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+.agent-card.off { opacity: 0.6; }
+.ag-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.ag-icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, rgba(74,28,107,0.5), rgba(196,75,122,0.3)); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+body.light .ag-icon { background: #f1f2f4; }
+.ag-name { font-weight: 800; font-size: 15px; }
+.ag-role { font-size: 11.5px; color: var(--gold); margin-top: 2px; }
+.ag-persona { font-size: 12.5px; color: var(--dim); line-height: 1.7; margin-bottom: 12px; min-height: 42px; }
+.ag-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ag-tag { font-size: 10.5px; padding: 3px 9px; border-radius: 20px; background: var(--panel2); border: 1px solid var(--border); color: var(--dim); }
+.ag-foot { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
+.ag-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 20px; cursor: pointer; border: 1px solid var(--border); background: var(--panel2); color: var(--dim); }
+.ag-toggle.on { color: var(--green); border-color: rgba(79,199,155,0.4); background: rgba(79,199,155,0.1); }
+.ag-actions { margin-inline-start: auto; display: flex; gap: 6px; }
+
+/* ===== معلومات المتجر ===== */
+.kb-field { margin-bottom: 14px; }
+.kb-field label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.kb-field .kb-hint { font-size: 11px; color: var(--dim2); margin-bottom: 6px; }
+.kb-field input, .kb-field textarea {
+  width: 100%; padding: 10px 12px; background: var(--panel2);
+  border: 1px solid var(--border); border-radius: 9px;
+  color: var(--text); font-family: inherit; font-size: 13px; resize: vertical;
+}
+.kb-field input:focus, .kb-field textarea:focus { outline: none; border-color: var(--border-gold); }
+.kb-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.faq-item { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 13px 15px; margin-bottom: 10px; }
+.faq-q { font-weight: 700; font-size: 13.5px; margin-bottom: 4px; }
+.faq-q::before { content: '❓ '; }
+.faq-a { font-size: 12.5px; color: var(--dim); line-height: 1.7; }
+.faq-a::before { content: '↩️ '; }
+.faq-actions { display: flex; gap: 6px; margin-top: 8px; }
+@media (max-width: 640px) { .kb-grid2 { grid-template-columns: 1fr; } }
+
+@media (max-width: 760px) {
+  .conv-layout { grid-template-columns: 1fr; height: auto; }
+  .conv-main { min-height: 400px; }
+}
+
+/* ===== لوحة الألوان (مربعات) ===== */
+.color-btn { width: 36px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; flex-shrink: 0; position: relative; }
+.color-btn::after { content: '▾'; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); font-size: 9px; color: rgba(255,255,255,0.7); text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+.swatch-pop {
+  position: absolute; z-index: 70;
+  background: var(--panel); border: 1px solid var(--border-gold);
+  border-radius: 12px; padding: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  width: 316px;
+}
+.swatch-grid { display: grid; grid-template-columns: repeat(8, 34px); gap: 4px; }
+.swatch { width: 34px; height: 26px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; transition: transform 0.1s; }
+.swatch:hover { transform: scale(1.18); border-color: var(--gold); z-index: 1; position: relative; }
+.swatch-custom {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--dim); cursor: pointer;
+}
+.swatch-custom:hover { color: var(--gold); }
+.swatch-custom input[type=color] { width: 34px; height: 26px; padding: 1px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel2); cursor: pointer; }
+.swatch-name { font-size: 11px; color: var(--dim); text-align: center; margin-top: 6px; min-height: 15px; }
+
+/* ===== صورة المنتج ===== */
+.img-drop {
+  display: flex; align-items: center; gap: 12px;
+  border: 1px dashed var(--border); border-radius: 12px;
+  padding: 10px 12px; margin-bottom: 12px; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.img-drop:hover { border-color: var(--border-gold); }
+.img-prev { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; background: var(--panel2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; overflow: hidden; }
+.img-prev img { width: 100%; height: 100%; object-fit: cover; }
+.img-txt { font-size: 12px; color: var(--dim); line-height: 1.6; }
+.pc-img { width: 46px; height: 46px; border-radius: 10px; object-fit: cover; background: var(--panel2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; overflow: hidden; }
+.pc-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* معرض صور المنتج */
+.pm-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.pm-thumb { position: relative; width: 64px; height: 64px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.pm-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.pm-thumb.primary { border: 2px solid var(--gold); }
+.pm-thumb .pm-star { position: absolute; top: 2px; inset-inline-start: 2px; font-size: 11px; background: rgba(0,0,0,0.5); border-radius: 4px; padding: 0 3px; cursor: pointer; }
+.pm-thumb .pm-del { position: absolute; top: 2px; inset-inline-end: 2px; width: 18px; height: 18px; border-radius: 50%; background: rgba(220,60,60,0.9); color: #fff; border: none; font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.pm-thumb.uploading { opacity: 0.5; }
+.pm-thumb.uploading::after { content: '⏳'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+@media (max-width: 760px) {
+  .app.ready { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .side-foot { margin-top: 0; border: none; padding: 0; margin-inline-start: auto; }
+  .nav-group { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- شاشة التحميل -->
+<div id="loader">
+  <svg viewBox="0 0 120 120" width="64" height="64" fill="none">
+    <ellipse cx="60" cy="60" rx="55" ry="35" stroke="#f4d03f" stroke-width="3" fill="rgba(244,208,63,0.08)" />
+    <circle cx="60" cy="60" r="22" fill="#c44b7a" />
+    <circle cx="60" cy="60" r="10" fill="#1a0a2e" />
+  </svg>
+  <div class="t">جارٍ تحميل بصيرة...</div>
+</div>
+
+<!-- التطبيق -->
+<div class="app" id="app">
+
+  <!-- القائمة الجانبية -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 120 120" width="34" height="34" fill="none">
+        <ellipse cx="60" cy="60" rx="55" ry="35" stroke="#f4d03f" stroke-width="4" fill="rgba(244,208,63,0.08)" />
+        <circle cx="60" cy="60" r="22" fill="#c44b7a" />
+        <circle cx="60" cy="60" r="10" fill="#1a0a2e" />
+      </svg>
+      <div>
+        <div class="name">بصيرة</div>
+        <div class="sub">نرى ما لا تراه</div>
+      </div>
+    </div>
+
+    <div class="nav-group">البيع</div>
+    <button class="nav-item active" data-view="overview">📊 نظرة عامة</button>
+    <button class="nav-item" data-view="products">📦 المنتجات والمخزون</button>
+    <button class="nav-item" data-view="orders">🛍️ الطلبات</button>
+    <button class="nav-item" data-view="conversations">💬 المحادثات</button>
+
+    <div class="nav-group">الإدارة</div>
+    <button class="nav-item" data-view="knowledge">📚 معلومات المتجر</button>
+    <button class="nav-item" data-view="team">🤖 فريق الذكاء</button>
+    <button class="nav-item" data-view="settings">⚙️ الإعدادات</button>
+
+    <div class="side-foot">
+      <div class="userbox">
+        <div class="avatar" id="avatarLetter">؟</div>
+        <div>
+          <div class="un" id="userName">...</div>
+          <div class="ur" id="userRole">...</div>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle">🌙 الوضع الداكن</button>
+      <button class="btn-logout" id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </aside>
+
+  <!-- المحتوى -->
+  <main class="main">
+    <div class="err-box" id="errBox"></div>
+
+    <!-- نظرة عامة -->
+    <section id="view-overview">
+      <div class="head">
+        <h1 id="merchantTitle">...</h1>
+        <div class="sub" id="todayDate"></div>
+      </div>
+
+      <div class="welcome">
+        <h2 id="welcomeMsg">أهلاً! 👋</h2>
+        <p>هاي لوحة تحكم بصيرة حقّك — مربوطة ببياناتك الحقيقية. الأرقام تحت بتنعكس مباشرة من قاعدة بياناتك، وكل قسم جديد نبنيه رح يظهر هون.</p>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="ic">📦</div><div class="num" id="kpiProducts">0</div><div class="lbl">منتجات</div></div>
+        <div class="kpi"><div class="ic">🛍️</div><div class="num" id="kpiOrders">0</div><div class="lbl">طلبات</div></div>
+        <div class="kpi"><div class="ic">👥</div><div class="num" id="kpiCustomers">0</div><div class="lbl">عملاء</div></div>
+        <div class="kpi"><div class="ic">💬</div><div class="num" id="kpiConvs">0</div><div class="lbl">محادثات</div></div>
+      </div>
+    </section>
+
+    <!-- أقسام قادمة -->
+    <section id="view-products" style="display:none">
+      <div class="head"><h1>المنتجات والمخزون</h1><div class="sub">المتاح للبيع = الكمية − المحجوز للطلبات</div></div>
+      <div class="toolbar">
+        <input class="search-box" id="prodSearch" placeholder="🔍 ابحث عن منتج...">
+        <button class="btn-add" id="btnAddProduct">+ منتج جديد</button>
+      </div>
+      <div class="prod-grid" id="prodGrid">
+        <div class="empty-state">جارٍ التحميل...</div>
+      </div>
+    </section>
+
+    <!-- مودال إضافة/تعديل منتج -->
+    <div class="modal-bg" id="prodModalBg">
+      <div class="modal">
+        <h3 id="prodModalTitle">منتج جديد</h3>
+        <div class="m-field">
+          <label>اسم المنتج</label>
+          <input type="text" id="pmName" placeholder="مثال: قميص كلاسيك">
+        </div>
+        <div class="img-drop" id="pmImgDrop">
+          <div class="img-prev" id="pmImgPrev">📷</div>
+          <div class="img-txt"><b>صور المنتج</b> (حتى ١٠ صور)<br>اضغط لإضافة صور من جهازك</div>
+          <input type="file" id="pmImgFile" accept="image/*" multiple style="display:none">
+        </div>
+        <div id="pmGallery" class="pm-gallery"></div>
+        <div class="m-grid2">
+          <div class="m-field">
+            <label>الفئة</label>
+            <input type="text" id="pmCat" placeholder="ملابس، أحذية...">
+          </div>
+          <div class="m-field">
+            <label>السعر (د.أ)</label>
+            <input type="text" id="pmPrice" inputmode="decimal" dir="ltr" placeholder="0.00">
+          </div>
+        </div>
+        <div class="vars-title">المتغيّرات — لون · مقاس · الكمية · سعر خاص (فاضي = سعر المنتج)</div>
+        <div id="pmVars"></div>
+        <button class="btn-addvar" id="pmAddVar">+ إضافة متغيّر</button>
+        <div class="m-actions">
+          <button class="btn-ghost" id="pmCancel">إلغاء</button>
+          <button class="btn-save" id="pmSave">حفظ</button>
+        </div>
+      </div>
+    </div>
+    <section id="view-orders" style="display:none">
+      <div class="head"><h1>الطلبات</h1><div class="sub">طلب جديد بيحجز المخزون · التسليم بيخصمه · الإلغاء بيرجّعه</div></div>
+      <div class="toolbar">
+        <div class="ord-tabs" style="margin:0;flex:1">
+          <button class="ord-tab active" data-otab="all">الكل <span class="ot-n" id="otAll">0</span></button>
+          <button class="ord-tab" data-otab="new">جديد <span class="ot-n" id="otNew">0</span></button>
+          <button class="ord-tab" data-otab="confirmed">مؤكّد <span class="ot-n" id="otConfirmed">0</span></button>
+          <button class="ord-tab" data-otab="delivering">قيد التوصيل <span class="ot-n" id="otDelivering">0</span></button>
+          <button class="ord-tab" data-otab="done">تم التسليم <span class="ot-n" id="otDone">0</span></button>
+          <button class="ord-tab" data-otab="rejected">مرفوض <span class="ot-n" id="otRejected">0</span></button>
+          <button class="ord-tab" data-otab="canceled">ملغى <span class="ot-n" id="otCanceled">0</span></button>
+        </div>
+        <button class="btn-add" id="btnAddOrder">+ طلب جديد</button>
+      </div>
+      <div class="ord-list" id="ordList"><div class="empty-state">جارٍ التحميل...</div></div>
+    </section>
+
+    <!-- مودال طلب جديد -->
+    <div class="modal-bg" id="ordModalBg">
+      <div class="modal">
+        <h3>طلب جديد</h3>
+        <div class="m-grid2">
+          <div class="m-field">
+            <label>اسم العميل</label>
+            <input type="text" id="omCustName" placeholder="مثال: أحمد حسن">
+          </div>
+          <div class="m-field">
+            <label>هاتف العميل (اختياري)</label>
+            <input type="text" id="omCustPhone" inputmode="tel" dir="ltr" placeholder="07XXXXXXXX">
+          </div>
+        </div>
+        <div class="m-grid2">
+          <div class="m-field">
+            <label>منطقة التوصيل (اختياري)</label>
+            <input type="text" id="omZone" placeholder="مثال: الصويفية">
+          </div>
+          <div class="m-field">
+            <label>طريقة التوصيل</label>
+            <select id="omDeliv" style="width:100%;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px">
+              <option value="basira">كابتن بصيرة</option>
+              <option value="merchant">دلفيري المتجر</option>
+            </select>
+          </div>
+        </div>
+        <div class="vars-title">المنتجات المطلوبة</div>
+        <div id="omItems"></div>
+        <button class="btn-addvar" id="omAddItem">+ إضافة منتج</button>
+        <div class="ord-total-line"><span>الإجمالي</span><b id="omTotal">0.00 د.أ</b></div>
+        <div class="m-actions">
+          <button class="btn-ghost" id="omCancel">إلغاء</button>
+          <button class="btn-save" id="omSave">إنشاء الطلب</button>
+        </div>
+      </div>
+    </div>
+    <!-- مودال تفاصيل الطلب -->
+    <div class="modal-bg" id="ordDetailBg">
+      <div class="modal">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <h3 style="margin:0">تفاصيل الطلب</h3>
+          <span id="odStatus" class="ord-badge"></span>
+        </div>
+        <div id="odBody" style="display:flex;flex-direction:column;gap:14px;margin-top:10px"></div>
+        <div class="m-actions" style="margin-top:16px">
+          <button class="btn-ghost" id="odClose">إغلاق</button>
+          <button class="btn-save" id="odPrint">🖨️ طباعة كليبة</button>
+        </div>
+      </div>
+    </div>
+    <section id="view-conversations" style="display:none">
+      <div class="head"><h1>المحادثات</h1><div class="sub">محادثات عملائك · حالياً الرد يدوي · قريباً بصيرة ترد تلقائياً</div></div>
+      <div class="conv-layout">
+        <div class="conv-list" id="convList"><div class="conv-empty">جارٍ التحميل...</div></div>
+        <div class="conv-main" id="convMain">
+          <div class="conv-empty" id="convPlaceholder">💬 اختر محادثة من القائمة لعرض الرسائل</div>
+        </div>
+      </div>
+    </section>
+    <section id="view-knowledge" style="display:none">
+      <div class="head"><h1>معلومات المتجر</h1><div class="sub">دفتر معرفة بصيرة — الموظف بيرد على العملاء من هالمعلومات. كل ما عبّيت أكثر، ردود أذكى.</div></div>
+
+      <div class="settings-card" style="max-width:820px">
+        <h2>المعلومات الأساسية</h2>
+        <div class="sc-sub">وين موقعكم، ساعات العمل، التوصيل، الدفع... بصيرة بتستعملها لما يسأل العميل.</div>
+        <div class="kb-grid2">
+          <div class="kb-field">
+            <label>الموقع</label>
+            <div class="kb-hint">العنوان بالكلام</div>
+            <input type="text" id="kbLocation" placeholder="مثال: عمّان، طبربور، شارع الاستقلال">
+          </div>
+          <div class="kb-field">
+            <label>رابط الخريطة</label>
+            <div class="kb-hint">رابط قوقل ماب (اختياري)</div>
+            <input type="text" id="kbLocationUrl" dir="ltr" placeholder="https://maps.google.com/...">
+          </div>
+        </div>
+        <div class="kb-grid2">
+          <div class="kb-field">
+            <label>ساعات العمل</label>
+            <input type="text" id="kbHours" placeholder="مثال: السبت-الخميس ١٠ص-١٠م، الجمعة مسكّر">
+          </div>
+          <div class="kb-field">
+            <label>أرقام التواصل</label>
+            <input type="text" id="kbPhones" dir="ltr" placeholder="07XXXXXXXX">
+          </div>
+        </div>
+        <div class="kb-field">
+          <label>طرق الدفع</label>
+          <input type="text" id="kbPayment" placeholder="مثال: كاش عند الاستلام، كليك، فيزا">
+        </div>
+        <div class="kb-field">
+          <label>سياسة التوصيل</label>
+          <div class="kb-hint">المناطق، الأسعار، المدة</div>
+          <textarea id="kbDelivery" rows="2" placeholder="مثال: عمّان ٢ دينار خلال يوم، باقي المحافظات ٣-٤ دنانير خلال يومين"></textarea>
+        </div>
+        <div class="kb-field">
+          <label>سياسة الإرجاع / الاستبدال</label>
+          <textarea id="kbReturn" rows="2" placeholder="مثال: استبدال خلال ٣ أيام مع الفاتورة، بشرط ما يكون مستعمل"></textarea>
+        </div>
+        <div class="kb-field">
+          <label>ملاحظات إضافية</label>
+          <textarea id="kbExtra" rows="2" placeholder="أي معلومة تانية بتحب الموظف يعرفها"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <span id="kbSaved" style="align-self:center;font-size:12px;color:var(--green);display:none">✓ انحفظ</span>
+          <button class="btn-save" id="kbSaveBtn">حفظ المعلومات</button>
+        </div>
+      </div>
+
+      <div class="settings-card" style="max-width:820px">
+        <h2>أسئلة وأجوبة مخصّصة</h2>
+        <div class="sc-sub">أي سؤال بيتكرر من عملائك — ضيفه مع جوابه، وبصيرة بترد فيه تلقائياً.</div>
+        <div id="faqList"></div>
+        <button class="btn-add" id="btnAddFaq" style="margin-top:10px">+ سؤال جديد</button>
+      </div>
+    </section>
+
+    <!-- مودال سؤال FAQ -->
+    <div class="modal-bg" id="faqModalBg">
+      <div class="modal">
+        <h3 id="faqModalTitle">سؤال جديد</h3>
+        <div class="m-field">
+          <label>السؤال (زي ما بيسأل العميل)</label>
+          <input type="text" id="faqQ" placeholder="مثال: بتوصلوا لإربد؟">
+        </div>
+        <div class="m-field">
+          <label>الجواب (زي ما بدك بصيرة ترد)</label>
+          <textarea id="faqA" rows="3" placeholder="مثال: آه أكيد! التوصيل لإربد ٣ دنانير ويوصل خلال يومين"></textarea>
+        </div>
+        <div class="m-actions">
+          <button class="btn-ghost" id="faqCancel">إلغاء</button>
+          <button class="btn-save" id="faqSave">حفظ</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="view-team" style="display:none">
+      <div class="head"><h1>فريق الذكاء</h1><div class="sub">موظفو بصيرة — كل واحد بدور. حالياً إعداداتهم تُحفظ وتجهّز؛ يشتغلون فعلياً بعد ربط المحرّك.</div></div>
+      <div class="toolbar">
+        <div style="flex:1"></div>
+        <button class="btn-add" id="btnAddAgent">+ موظف جديد</button>
+      </div>
+      <div class="team-grid" id="teamGrid"><div class="empty-state">جارٍ التحميل...</div></div>
+    </section>
+
+    <!-- مودال موظف الذكاء -->
+    <div class="modal-bg" id="agentModalBg">
+      <div class="modal">
+        <h3 id="agentModalTitle">موظف جديد</h3>
+        <div class="m-grid2">
+          <div class="m-field">
+            <label>اسم الموظف</label>
+            <input type="text" id="agName" placeholder="مثال: موظف الردود">
+          </div>
+          <div class="m-field">
+            <label>الأيقونة</label>
+            <input type="text" id="agIcon" placeholder="💬" maxlength="2">
+          </div>
+        </div>
+        <div class="m-field">
+          <label>الدور</label>
+          <select id="agRole" style="width:100%;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px">
+            <option value="replies">الرد على العملاء</option>
+            <option value="sales">المبيعات والإقناع</option>
+            <option value="coordination">تنسيق الطلبات</option>
+            <option value="delivery">التوصيل والكباتن</option>
+            <option value="followup">المتابعة</option>
+            <option value="custom">دور مخصّص</option>
+          </select>
+        </div>
+        <div class="m-field">
+          <label>الشخصية / التعليمات</label>
+          <input type="text" id="agPersona" placeholder="مثال: ودود، يرد بالعامية الأردنية، مختصر">
+        </div>
+        <div class="m-grid2">
+          <div class="m-field">
+            <label>نبرة الكلام</label>
+            <select id="agTone" style="width:100%;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px">
+              <option value="dialect">عامية</option>
+              <option value="friendly">ودّي</option>
+              <option value="formal">رسمي</option>
+            </select>
+          </div>
+          <div class="m-field">
+            <label>متى يحوّل لإنسان</label>
+            <select id="agHandoff" style="width:100%;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:13.5px">
+              <option value="auto">تلقائي (عند الحاجة)</option>
+              <option value="smart">ذكي (الحالات المعقّدة)</option>
+              <option value="always_human">دائماً (يقترح فقط)</option>
+            </select>
+          </div>
+        </div>
+        <div class="m-actions">
+          <button class="btn-ghost" id="agCancel">إلغاء</button>
+          <button class="btn-save" id="agSave">حفظ</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="view-settings" style="display:none">
+      <div class="head"><h1>الإعدادات</h1><div class="sub">اربط قنوات التواصل وأدر متجرك</div></div>
+
+      <div class="settings-card">
+        <h2>القنوات المربوطة</h2>
+        <div class="sc-sub">اربط حساباتك عشان بصيرة تستقبل رسائل عملائك وترد عليهم. الربط الفعلي بيتفعّل بعد إعداد المحرّك.</div>
+        <div id="chList"></div>
+        <div style="margin-top:16px">
+          <div class="sc-sub" style="margin-bottom:8px">أضف قناة:</div>
+          <div class="ch-add-grid">
+            <button class="ch-add-btn" data-addch="whatsapp">
+              <span id="waLogo"></span> واتساب
+            </button>
+            <button class="ch-add-btn" data-addch="facebook">
+              <span id="fbLogo"></span> فيسبوك
+            </button>
+            <button class="ch-add-btn" data-addch="instagram">
+              <span id="igLogo"></span> إنستغرام
+            </button>
+            <button class="ch-add-btn" data-addch="messenger">
+              <span id="msLogo"></span> ماسنجر
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h2>معلومات المتجر</h2>
+        <div class="sc-sub" id="storeInfo">...</div>
+      </div>
+    </section>
+
+    <!-- مودال إضافة قناة -->
+    <div class="modal-bg" id="chModalBg">
+      <div class="modal">
+        <h3 id="chModalTitle">ربط قناة</h3>
+        <div class="sc-sub" id="chModalHint" style="margin-bottom:14px"></div>
+        <div class="m-field">
+          <label id="chHandleLabel">اسم الحساب / الصفحة</label>
+          <input type="text" id="chHandle" placeholder="مثال: متجر النور">
+        </div>
+        <div class="m-field">
+          <label id="chIdLabel">معرّف الصفحة / الرقم</label>
+          <input type="text" id="chPageId" dir="ltr" placeholder="Page ID أو رقم الواتساب">
+        </div>
+        <div class="m-field">
+          <label>مفتاح الربط / التوكن (اختياري الآن)</label>
+          <input type="password" id="chToken" dir="ltr" placeholder="يُخزّن مشفّراً — يُدخل عند تفعيل المحرّك">
+        </div>
+        <div class="m-actions">
+          <button class="btn-ghost" id="chCancel">إلغاء</button>
+          <button class="btn-save" id="chSave">حفظ القناة</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="basira-api.js"></script>
+<script>
+/* ================= إعداد الربط ================= */
+BasiraAPI.init(
+  'https://ziywbwmsbubzelecvcrr.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppeXdid21zYnViemVsZWN2Y3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTE0OTYsImV4cCI6MjEwMDU2NzQ5Nn0.QQ4Bx6QTNz8agNvEMyF9LmYYm_O5JLF3jg2AJ3nQJFQ'
+);
+
+function showErr(t) {
+  const b = document.getElementById('errBox');
+  b.textContent = t; b.classList.add('show');
+}
+
+/* ================= حارس الجلسة ================= */
+/* بدون جلسة صالحة + متجر → رجوع لصفحة الدخول. هاد أساس أمان الواجهة */
+(async () => {
+  let ctx = null;
+  try { ctx = await BasiraAPI.auth.restoreSession(); } catch (_) {}
+  if (!ctx || !ctx.membership) {
+    window.location.href = 'auth.html';
+    return;
+  }
+  boot(ctx);
+})();
+
+/* ================= إقلاع اللوحة ================= */
+async function boot(ctx) {
+  const m = ctx.membership;
+
+  /* هوية المستخدم والمتجر */
+  document.getElementById('merchantTitle').textContent = m.merchant_name;
+  document.getElementById('userName').textContent = m.member_name;
+  document.getElementById('userRole').textContent = m.is_owner ? 'المالك' : (m.role_name || 'عضو');
+  document.getElementById('avatarLetter').textContent = (m.member_name || '؟').charAt(0);
+  document.getElementById('welcomeMsg').textContent = 'أهلاً ' + m.member_name + '! 👋';
+
+  /* التاريخ */
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('ar', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  /* الأرقام الحقيقية */
+  try {
+    const [prods, orders, custs, convs] = await Promise.all([
+      BasiraAPI.products.list(),
+      BasiraAPI.orders.list(),
+      BasiraAPI.customers.list(),
+      BasiraAPI.conversations.list()
+    ]);
+    document.getElementById('kpiProducts').textContent = prods.length;
+    document.getElementById('kpiOrders').textContent = orders.length;
+    document.getElementById('kpiCustomers').textContent = custs.length;
+    document.getElementById('kpiConvs').textContent = convs.length;
+  } catch (e) {
+    showErr('تعذّر تحميل الأرقام: ' + e.message);
+  }
+
+  /* أظهر التطبيق */
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('app').classList.add('ready');
+}
+
+/* ================= التنقّل ================= */
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+    const v = document.getElementById('view-' + btn.dataset.view);
+    if (v) v.style.display = 'block';
+  });
+});
+
+/* ================= تبديل الثيم ☀️/🌙 ================= */
+function applyTheme(mode) {
+  document.body.classList.toggle('light', mode === 'light');
+  document.getElementById('themeToggle').textContent = mode === 'light' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+  localStorage.setItem('basira_theme', mode);
+}
+document.getElementById('themeToggle').addEventListener('click', () => {
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+});
+/* استرجع الثيم المحفوظ فور فتح الصفحة */
+applyTheme(localStorage.getItem('basira_theme') || 'dark');
+
+/* ================= تسجيل الخروج ================= */
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await BasiraAPI.auth.logout();
+  window.location.href = 'auth.html';
+});
+
+/* ============================================================
+   قسم المنتجات والمخزون — بيانات حقيقية
+   ============================================================ */
+const LOW_STOCK = 3;
+let prodCache = [];          // نسخة محلية من المنتجات للعرض والبحث
+let editingId = null;        // null = منتج جديد، غيره = تعديل
+let editVars = [];           // متغيّرات المودال الحالية
+let prodLoaded = false;
+let showArchived = false;
+
+/* --- تحميل وعرض --- */
+async function loadProducts() {
+  const grid = document.getElementById('prodGrid');
+  try {
+    prodCache = await BasiraAPI.products.list();
+    renderProducts(document.getElementById('prodSearch').value);
+    /* حدّث رقم النظرة العامة كمان */
+    document.getElementById('kpiProducts').textContent = prodCache.length;
+    prodLoaded = true;
+  } catch (e) {
+    grid.innerHTML = '<div class="empty-state">تعذّر التحميل: ' + e.message + '</div>';
+  }
+}
+
+function renderProducts(q) {
+  q = (q || '').trim().toLowerCase();
+  const grid = document.getElementById('prodGrid');
+  const list = prodCache.filter(p => p.is_active !== false && (!q || (p.name||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)));
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state">' + (prodCache.length ? 'لا يوجد منتج مطابق' : '📦 لسا ما في منتجات<br>اضغط "+ منتج جديد" وضيف أول منتج لمتجرك') + '</div>';
+    return;
+  }
+  grid.innerHTML = list.map(p => {
+    const vars = (p.variants || []).map(v => {
+      const avail = v.stock - v.reserved;
+      const cls = avail <= 0 ? 'pv-out' : (avail <= LOW_STOCK ? 'pv-low' : 'pv-ok');
+      const txt = avail <= 0 ? 'نفد' : avail + ' متاح' + (v.reserved > 0 ? ' (' + v.reserved + ' محجوز)' : '');
+      return '<div class="pv-row">' +
+        '<span class="pv-sw" style="background:' + (v.color_hex || '#666') + '"></span>' +
+        '<span class="pv-name">' + [v.color, v.size].filter(Boolean).join(' · ') + ((v.price === 0 || v.price) ? ' <span style="color:var(--gold)">' + Number(v.price).toFixed(2) + '</span>' : '') + '</span>' +
+        '<span class="' + cls + '">' + txt + '</span></div>';
+    }).join('') || '<div class="pv-row"><span class="pv-name" style="color:var(--dim2)">بدون متغيّرات</span></div>';
+    const total = (p.variants || []).reduce((s, v) => s + v.stock, 0);
+    return '<div class="prod-card"' + (p.is_active === false ? ' style="opacity:0.55"' : '') + '>' +
+      '<div class="pc-head">' + (p.image_url ? '<div class="pc-img"><img src="' + esc(p.image_url) + '"></div>' : '<div class="pc-img">📦</div>') + '<div style="flex:1;min-width:0"><div class="pc-name">' + esc(p.name) + '</div>' +
+      '<div class="pc-cat">' + esc(p.category || '') + (p.is_active === false ? ' · <span style="color:var(--gold)">مؤرشف</span>' : '') + '</div></div>' +
+      '<div class="pc-price">' + Number(p.price).toFixed(2) + ' د.أ</div></div>' +
+      '<div class="pc-vars">' + vars + '</div>' +
+      '<div class="pc-foot"><span class="pc-total">إجمالي: ' + total + ' قطعة</span>' +
+      '<div class="pc-actions">' +
+      '<button class="btn-sm" data-edit="' + p.id + '">تعديل</button>' +
+      '<button class="btn-sm danger" data-del="' + p.id + '">إزالة</button>' +
+      '</div></div></div>';
+  }).join('');
+
+  grid.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => openProdModal(b.dataset.edit)));
+  grid.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteProduct(b.dataset.del)));
+}
+
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* --- المودال --- */
+/* لوحة الألوان الكاملة: hex → اسم عربي (٤٨ لون بدرجاتها) */
+const COLOR_PALETTE = [
+  /* محايدة */
+  ['#000000','أسود'], ['#3D3D3D','فحمي'], ['#808080','رمادي'], ['#C0C0C0','رمادي فاتح'], ['#E8E8E8','سكني'], ['#FFFFFF','أبيض'],
+  /* بيج وبني */
+  ['#FFF8DC','عاجي'], ['#F5E6C8','بيج'], ['#D2B48C','كاميل'], ['#A0713C','عسلي'], ['#8B4513','بني'], ['#4A2C17','بني غامق'],
+  /* أزرق */
+  ['#E0F2FF','أزرق ثلجي'], ['#87CEEB','سماوي'], ['#4A90D9','أزرق فاتح'], ['#2E5CB8','أزرق'], ['#1B3A8C','أزرق ملكي'], ['#000080','كحلي'],
+  /* أخضر وتركواز */
+  ['#40E0D0','تركواز'], ['#20B2AA','أخضر بحري'], ['#90EE90','أخضر فاتح'], ['#228B22','أخضر'], ['#006400','أخضر غامق'], ['#556B2F','زيتي'],
+  /* أصفر وذهبي */
+  ['#FFFACD','ليموني فاتح'], ['#F4D03F','أصفر'], ['#FFD700','ذهبي'], ['#DAA520','خردلي'], ['#FF8C00','برتقالي'], ['#CC5500','برتقالي محروق'],
+  /* أحمر */
+  ['#FFB6B6','أحمر فاتح'], ['#FF6347','مرجاني'], ['#C0392B','أحمر'], ['#A52A2A','قرميدي'], ['#8B0000','خمري'], ['#5C0A14','عنابي'],
+  /* وردي */
+  ['#FFE4E9','وردي فاتح'], ['#FFB6C1','زهري'], ['#E75480','وردي'], ['#DB2777','فوشيا'], ['#C71585','وردي غامق'], ['#8B2252','توتي'],
+  /* بنفسجي */
+  ['#E6D9F2','ليلكي'], ['#C8A2C8','ليلكي غامق'], ['#9B59B6','بنفسجي فاتح'], ['#800080','بنفسجي'], ['#4B0082','نيلي'], ['#2E1A47','باذنجاني']
+];
+
+function varRowHtml(v, i) {
+  return '<div class="var-row" data-vi="' + i + '">' +
+    '<button type="button" class="color-btn" data-swatch="' + i + '" style="background:' + (v.color_hex || '#888888') + '" title="' + esc(v.color || 'اختر اللون') + '"></button>' +
+    '<input type="text" value="' + esc(v.color || '') + '" placeholder="اللون" data-f="color">' +
+    '<input type="text" value="' + esc(v.size || '') + '" placeholder="مقاس" data-f="size">' +
+    '<input type="text" class="v-stock" value="' + (v.stock ?? 0) + '" inputmode="numeric" data-f="stock" title="الكمية">' +
+    '<input type="text" class="v-stock" value="' + ((v.price === 0 || v.price) ? v.price : '') + '" inputmode="decimal" dir="ltr" placeholder="سعر" data-f="price" title="سعر خاص (اختياري)">' +
+    '<button type="button" class="var-del" data-delvar="' + i + '">✕</button></div>';
+}
+
+/* فتح لوحة المربعات عند الضغط على زر اللون */
+let swatchPop = null;
+function closeSwatchPop() { if (swatchPop) { swatchPop.remove(); swatchPop = null; } }
+function openSwatchPop(btn, vi) {
+  closeSwatchPop();
+  swatchPop = document.createElement('div');
+  swatchPop.className = 'swatch-pop';
+  swatchPop.innerHTML =
+    '<div class="swatch-grid">' +
+    COLOR_PALETTE.map(([hex, name]) =>
+      '<button type="button" class="swatch" style="background:' + hex + '" title="' + name + '" data-hex="' + hex + '" data-cname="' + name + '"></button>').join('') +
+    '</div>' +
+    '<div class="swatch-name" id="swName">مرّر على لون لمعرفة اسمه</div>' +
+    '<label class="swatch-custom">🎨 لون مخصص — اختر أي درجة' +
+    '<input type="color" id="swCustom" value="#888888"></label>';
+  document.body.appendChild(swatchPop);
+  const r = btn.getBoundingClientRect();
+  const popW = 336;
+  swatchPop.style.top = (r.bottom + window.scrollY + 6) + 'px';
+  swatchPop.style.left = Math.max(8, Math.min(window.innerWidth - popW - 8, r.left + window.scrollX - popW / 2 + 18)) + 'px';
+  const nameEl = swatchPop.querySelector('#swName');
+  swatchPop.querySelectorAll('.swatch').forEach(s => {
+    s.addEventListener('mouseenter', () => { nameEl.textContent = s.dataset.cname; });
+    s.addEventListener('mouseleave', () => { nameEl.textContent = 'مرّر على لون لمعرفة اسمه'; });
+    s.addEventListener('click', () => {
+      syncModalVars();
+      editVars[vi].color_hex = s.dataset.hex;
+      editVars[vi].color = s.dataset.cname;
+      closeSwatchPop();
+      renderModalVars();
+    });
+  });
+  /* لون مخصص: يحدّد الدرجة ويترك الاسم للمستخدم يكتبه */
+  swatchPop.querySelector('#swCustom').addEventListener('change', (e) => {
+    syncModalVars();
+    editVars[vi].color_hex = e.target.value;
+    closeSwatchPop();
+    renderModalVars();
+    /* ركّز على خانة الاسم ليسمّي اللون */
+    const row = document.querySelector('#pmVars .var-row[data-vi="' + vi + '"] input[data-f=color]');
+    if (row) { row.focus(); row.placeholder = 'سمّي هاللون...'; }
+  });
+  swatchPop.querySelector('#swCustom').addEventListener('click', (e) => e.stopPropagation());
+}
+document.addEventListener('click', (e) => {
+  if (swatchPop && !swatchPop.contains(e.target) && !e.target.classList.contains('color-btn')) closeSwatchPop();
+});
+
+/* --- صور المنتج (متعددة، حتى ١٠) --- */
+const MAX_IMAGES = 10;
+let pmImages = [];      /* الصور الحالية: [{id?, image_url, isNew?, file?}] */
+let pmProductId = null; /* معرّف المنتج عند التعديل (لحفظ الصور مباشرة) */
+
+document.getElementById('pmImgDrop').addEventListener('click', () => document.getElementById('pmImgFile').click());
+document.getElementById('pmImgFile').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  for (const f of files) {
+    if (pmImages.length >= MAX_IMAGES) { showErr('الحد الأقصى ١٠ صور'); break; }
+    if (f.size > 3 * 1024 * 1024) { showErr('صورة كبيرة (' + f.name + ') — الحد ٣ ميغا'); continue; }
+    // معاينة فورية + رفع
+    const localUrl = URL.createObjectURL(f);
+    const entry = { image_url: localUrl, isNew: true, file: f, uploading: true };
+    pmImages.push(entry);
+    renderGallery();
+    try {
+      const url = await BasiraAPI.products.uploadImage(f);
+      entry.image_url = url; entry.uploading = false; entry.localUrl = localUrl;
+      // إذا المنتج موجود (تعديل)، احفظ الصورة بقاعدة البيانات فوراً
+      if (pmProductId) {
+        const saved = await BasiraAPI.productImages.add(pmProductId, url, pmImages.length - 1);
+        entry.id = saved.id;
+      }
+      renderGallery();
+    } catch (err) {
+      showErr('تعذّر رفع الصورة: ' + err.message);
+      pmImages = pmImages.filter(x => x !== entry);
+      renderGallery();
+    }
+  }
+});
+
+function renderGallery() {
+  const box = document.getElementById('pmGallery');
+  if (!box) return;
+  box.innerHTML = pmImages.map((im, i) =>
+    '<div class="pm-thumb' + (i === 0 ? ' primary' : '') + (im.uploading ? ' uploading' : '') + '">' +
+    '<img src="' + im.image_url + '">' +
+    (i === 0 ? '<span class="pm-star" title="الصورة الرئيسية">⭐</span>' : '<span class="pm-star" data-makeprimary="' + i + '" title="اجعلها رئيسية">☆</span>') +
+    '<button class="pm-del" data-delimg="' + i + '" title="حذف">×</button>' +
+    '</div>').join('');
+  // معاينة رئيسية بالمربّع الأساسي
+  document.getElementById('pmImgPrev').innerHTML = pmImages.length ? '<img src="' + pmImages[0].image_url + '">' : '📷';
+
+  box.querySelectorAll('[data-delimg]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); removeGalleryImage(+b.dataset.delimg); }));
+  box.querySelectorAll('[data-makeprimary]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); makePrimaryImage(+b.dataset.makeprimary); }));
+}
+
+async function removeGalleryImage(idx) {
+  const im = pmImages[idx];
+  if (im.id) {
+    try { await BasiraAPI.productImages.remove(im.id); }
+    catch (e) { showErr('تعذّر حذف الصورة: ' + e.message); return; }
+  }
+  pmImages.splice(idx, 1);
+  // لو المنتج موجود وحُذفت الرئيسية، حدّث الرئيسية الجديدة
+  if (pmProductId && pmImages.length) {
+    const first = pmImages[0];
+    if (first.id) await BasiraAPI.productImages.setPrimary(pmProductId, first.id, first.image_url).catch(()=>{});
+  }
+  renderGallery();
+}
+
+async function makePrimaryImage(idx) {
+  const im = pmImages.splice(idx, 1)[0];
+  pmImages.unshift(im);
+  if (pmProductId && im.id) {
+    await BasiraAPI.productImages.setPrimary(pmProductId, im.id, im.image_url).catch(e => showErr(e.message));
+  }
+  renderGallery();
+}
+
+function resetImgField(images) {
+  // images: مصفوفة من {id, image_url} أو null
+  pmImages = (images || []).map(im => ({ id: im.id, image_url: im.image_url }));
+  document.getElementById('pmImgFile').value = '';
+  renderGallery();
+}
+
+
+function renderModalVars() {
+  document.getElementById('pmVars').innerHTML = editVars.map(varRowHtml).join('');
+  document.querySelectorAll('[data-swatch]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); openSwatchPop(b, +b.dataset.swatch); }));
+  document.querySelectorAll('[data-delvar]').forEach(b => b.addEventListener('click', () => {
+    if (editVars.length <= 1) return;
+    syncModalVars();
+    editVars.splice(+b.dataset.delvar, 1);
+    renderModalVars();
+  }));
+}
+
+function syncModalVars() {
+  document.querySelectorAll('#pmVars .var-row').forEach(row => {
+    const i = +row.dataset.vi, v = editVars[i];
+    row.querySelectorAll('[data-f]').forEach(inp => {
+      const f = inp.dataset.f;
+      if (f === 'stock') v.stock = Math.max(0, parseInt(inp.value) || 0);
+      else if (f === 'price') { const pv = parseFloat(inp.value); v.price = isNaN(pv) ? null : pv; }
+      else v[f] = inp.value.trim();
+    });
+  });
+}
+
+function openProdModal(id) {
+  editingId = id || null;
+  pmProductId = id || null;
+  if (id) {
+    const p = prodCache.find(x => x.id === id);
+    document.getElementById('prodModalTitle').textContent = 'تعديل المنتج';
+    document.getElementById('pmName').value = p.name || '';
+    document.getElementById('pmCat').value = p.category || '';
+    document.getElementById('pmPrice').value = p.price;
+    editVars = (p.variants || []).map(v => ({ id: v.id, color: v.color, color_hex: v.color_hex, size: v.size, stock: v.stock, price: v.price }));
+    resetImgField([]); // نظّف، ثم حمّل الصور من قاعدة البيانات
+    BasiraAPI.productImages.list(id).then(imgs => { resetImgField(imgs); }).catch(() => {});
+    if (!editVars.length) editVars = [{ color: '', color_hex: '#888888', size: '', stock: 0 }];
+  } else {
+    document.getElementById('prodModalTitle').textContent = 'منتج جديد';
+    document.getElementById('pmName').value = '';
+    document.getElementById('pmCat').value = '';
+    document.getElementById('pmPrice').value = '';
+    editVars = [{ color: '', color_hex: '#888888', size: '', stock: 0 }];
+    resetImgField([]);
+  }
+  renderModalVars();
+  document.getElementById('prodModalBg').classList.add('open');
+  setTimeout(() => document.getElementById('pmName').focus(), 50);
+}
+
+function closeProdModal() { document.getElementById('prodModalBg').classList.remove('open'); }
+
+/* التنقّل بين خانات المودال بزر Enter (بالترتيب المنطقي) */
+function pmFieldsInOrder() {
+  const fields = [
+    document.getElementById('pmName'),
+    document.getElementById('pmCat'),
+    document.getElementById('pmPrice')
+  ];
+  /* خانات كل متغيّر: لون → مقاس → كمية → سعر */
+  document.querySelectorAll('#pmVars .var-row').forEach(row => {
+    ['color', 'size', 'stock', 'price'].forEach(f => {
+      const inp = row.querySelector('[data-f=' + f + ']');
+      if (inp) fields.push(inp);
+    });
+  });
+  return fields;
+}
+
+document.getElementById('prodModalBg').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const target = e.target;
+  if (target.tagName !== 'INPUT' || target.type === 'file' || target.type === 'color') return;
+  e.preventDefault();
+  const fields = pmFieldsInOrder();
+  const idx = fields.indexOf(target);
+  if (idx === -1) return;
+  if (idx < fields.length - 1) {
+    fields[idx + 1].focus();
+    if (fields[idx + 1].select) fields[idx + 1].select();
+  } else {
+    /* آخر خانة → احفظ */
+    saveProduct();
+  }
+});
+
+async function saveProduct() {
+  syncModalVars();
+  const name = document.getElementById('pmName').value.trim();
+  if (name.length < 2) { showErr('اكتب اسم المنتج'); return; }
+  const btn = document.getElementById('pmSave');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+  try {
+    // الصورة الرئيسية = أول صورة بالمعرض (إن وُجدت)
+    const primaryUrl = pmImages.length ? pmImages[0].image_url : null;
+    const fields = {
+      name,
+      category: document.getElementById('pmCat').value.trim() || null,
+      price: parseFloat(document.getElementById('pmPrice').value) || 0,
+      image_url: primaryUrl
+    };
+    if (editingId) {
+      /* تعديل: حدّث المنتج، وسوّي مزامنة المتغيّرات (تحديث/إضافة/حذف) */
+      await BasiraAPI.products.update(editingId, fields);
+      const orig = prodCache.find(x => x.id === editingId);
+      const origIds = (orig.variants || []).map(v => v.id);
+      const keptIds = editVars.filter(v => v.id).map(v => v.id);
+      for (const v of editVars) {
+        if (v.id) {
+          await BasiraAPI.products.updateVariant(v.id, { color: v.color || null, color_hex: v.color_hex, size: v.size || null, stock: v.stock, price: (v.price === 0 || v.price) ? v.price : null });
+        } else {
+          await BasiraAPI.products.addVariant(editingId, { color: v.color || null, colorHex: v.color_hex, size: v.size || null, stock: v.stock, price: (v.price === 0 || v.price) ? v.price : null });
+        }
+      }
+      for (const oid of origIds) {
+        if (!keptIds.includes(oid)) await BasiraAPI.products.removeVariant(oid);
+      }
+      // الصور تُحفظ لحظياً عند الرفع في وضع التعديل — لا حاجة لإعادة حفظها
+    } else {
+      /* جديد */
+      const newProd = await BasiraAPI.products.create({
+        name: fields.name, category: fields.category, price: fields.price, imageUrl: primaryUrl,
+        variants: editVars.map(v => ({ color: v.color || null, colorHex: v.color_hex, size: v.size || null, stock: v.stock, price: (v.price === 0 || v.price) ? v.price : null }))
+      });
+      // احفظ كل الصور المرفوعة بجدول الصور
+      if (newProd && newProd.id && pmImages.length) {
+        for (let i = 0; i < pmImages.length; i++) {
+          await BasiraAPI.productImages.add(newProd.id, pmImages[i].image_url, i).catch(() => {});
+        }
+      }
+    }
+    closeProdModal();
+    await loadProducts();
+  } catch (e) {
+    showErr('تعذّر الحفظ: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'حفظ';
+  }
+}
+
+async function deleteProduct(id) {
+  const p = prodCache.find(x => x.id === id);
+  if (!confirm('إزالة "' + p.name + '" نهائياً من متجرك؟')) return;
+  try {
+    await BasiraAPI.products.smartRemove(id);
+    await loadProducts();
+  } catch (e) {
+    showErr('تعذّرت الإزالة: ' + e.message);
+  }
+}
+
+/* --- ربط الأحداث --- */
+document.getElementById('btnAddProduct').addEventListener('click', () => openProdModal(null));
+document.getElementById('pmCancel').addEventListener('click', closeProdModal);
+document.getElementById('pmSave').addEventListener('click', saveProduct);
+document.getElementById('pmAddVar').addEventListener('click', () => { syncModalVars(); editVars.push({ color: '', color_hex: '#888888', size: '', stock: 0 }); renderModalVars(); });
+document.getElementById('prodModalBg').addEventListener('click', (e) => { if (e.target.id === 'prodModalBg') closeProdModal(); });
+document.getElementById('prodSearch').addEventListener('input', (e) => renderProducts(e.target.value));
+
+
+/* حمّل المنتجات أول ما يفتح القسم */
+document.querySelector('[data-view=products]').addEventListener('click', () => { if (!prodLoaded) loadProducts(); });
+
+/* ============================================================
+   قسم الطلبات — حجز مخزون حقيقي
+   ============================================================ */
+const OSTATUS = {
+  new:        { ar: 'جديد',        cls: 'os-new' },
+  confirmed:  { ar: 'مؤكّد',       cls: 'os-confirmed' },
+  delivering: { ar: 'قيد التوصيل', cls: 'os-delivering' },
+  done:       { ar: 'تم التسليم',  cls: 'os-done' },
+  canceled:   { ar: 'ملغى',        cls: 'os-canceled' },
+  rejected:   { ar: 'مرفوض',       cls: 'os-rejected' }
+};
+let ordCache = [];
+let ordFilter = 'all';
+let ordLoaded = false;
+let omItems = [];        // عناصر مودال الطلب: {variantId, qty}
+let flatVariants = [];   // كل المتغيّرات المتاحة للاختيار
+
+async function loadOrders() {
+  const list = document.getElementById('ordList');
+  try {
+    ordCache = await BasiraAPI.orders.list();
+    renderOrders();
+    document.getElementById('kpiOrders').textContent = ordCache.length;
+    ordLoaded = true;
+  } catch (e) {
+    list.innerHTML = '<div class="empty-state">تعذّر التحميل: ' + e.message + '</div>';
+  }
+}
+
+function renderOrders() {
+  /* عدّادات التبويبات */
+  const counts = { all: ordCache.length, new: 0, confirmed: 0, delivering: 0, done: 0, canceled: 0, rejected: 0 };
+  ordCache.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
+  for (const k of ['All','New','Confirmed','Delivering','Done','Canceled','Rejected']) {
+    document.getElementById('ot' + k).textContent = counts[k.toLowerCase()];
+  }
+
+  const list = document.getElementById('ordList');
+  const shown = ordFilter === 'all' ? ordCache : ordCache.filter(o => o.status === ordFilter);
+  if (!shown.length) {
+    list.innerHTML = '<div class="empty-state">' + (ordCache.length ? 'لا يوجد طلب بهذه الحالة' : '🛍️ لسا ما في طلبات<br>اضغط "+ طلب جديد" وجرّب أول طلب — ولاحظ كيف المخزون بينحجز') + '</div>';
+    return;
+  }
+  list.innerHTML = shown.map(o => {
+    const st = OSTATUS[o.status] || OSTATUS.new;
+    const items = (o.order_items || []).map(it => {
+      const v = it.variants || {};
+      const pname = (v.products && v.products.name) || 'منتج';
+      return (it.quantity > 1 ? it.quantity + '× ' : '') + pname + ' (' + [v.color, v.size].filter(Boolean).join('/') + ')';
+    }).join('، ');
+    const deliv = o.delivery_method === 'basira' ? 'كابتن بصيرة' : 'دلفيري المتجر';
+    let btns = '';
+    if (o.status === 'new') btns = '<button class="btn-sm" data-ost="confirmed" data-oid="' + o.id + '">✓ تأكيد</button><button class="btn-sm danger" data-ost="canceled" data-oid="' + o.id + '">إلغاء</button>';
+    else if (o.status === 'confirmed') btns = '<button class="btn-sm" data-ost="delivering" data-oid="' + o.id + '">🚚 للتوصيل</button><button class="btn-sm danger" data-ost="canceled" data-oid="' + o.id + '">إلغاء</button>';
+    else if (o.status === 'delivering') btns = '<button class="btn-sm" data-ost="done" data-oid="' + o.id + '">📦 تم التسليم</button><button class="btn-sm danger" data-ost="rejected" data-oid="' + o.id + '">🚫 رفض الاستلام</button>';
+    return '<div class="ord-card" data-detail="' + o.id + '" style="cursor:pointer"><div class="oc-main">' +
+      '<div class="oc-top"><span class="oc-cust">' + esc((o.customers && o.customers.name) || 'عميل') + '</span>' +
+      '<span class="ord-badge ' + st.cls + '">' + st.ar + '</span></div>' +
+      '<div class="oc-items">' + esc(items) + '</div>' +
+      '<div class="oc-meta">' + (o.zone ? '<span>📍 ' + esc(o.zone) + '</span>' : '') + '<span>🚚 ' + deliv + '</span>' +
+      '<span>🕐 ' + new Date(o.created_at).toLocaleString('ar', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</span></div>' +
+      '</div><div class="oc-side"><div class="oc-total">' + Number(o.total).toFixed(2) + ' د.أ</div>' +
+      '<div class="oc-btns">' + btns + '</div></div></div>';
+  }).join('');
+
+  list.querySelectorAll('[data-ost]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeOrderStatus(b.dataset.oid, b.dataset.ost); }));
+  list.querySelectorAll('[data-detail]').forEach(c => c.addEventListener('click', () => openOrderDetail(c.dataset.detail)));
+}
+
+/* --- مودال تفاصيل الطلب --- */
+let currentDetailOrderId = null;
+function openOrderDetail(orderId) {
+  const o = ordCache.find(x => x.id === orderId);
+  if (!o) return;
+  currentDetailOrderId = orderId;
+  const st = OSTATUS[o.status] || OSTATUS.new;
+  document.getElementById('odStatus').textContent = st.ar;
+  document.getElementById('odStatus').className = 'ord-badge ' + st.cls;
+
+  const cust = o.customers || {};
+  const phone = cust.phone || '';
+  const chMap = { whatsapp: 'واتساب', telegram: 'تيليجرام', instagram: 'إنستغرام', facebook: 'ماسنجر' };
+  const chLabel = chMap[cust.channel_type] || cust.channel_type || '';
+  const deliv = o.delivery_method === 'basira' ? 'كابتن بصيرة' : 'دلفيري المتجر';
+
+  const itemsHtml = (o.order_items || []).map(it => {
+    const v = it.variants || {};
+    const pname = (v.products && v.products.name) || 'منتج';
+    const variant = [v.color, v.size].filter(Boolean).join(' / ');
+    const line = Number(it.unit_price) * it.quantity;
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">' +
+      '<span>' + esc(pname) + (variant ? ' <span style="color:var(--muted)">(' + esc(variant) + ')</span>' : '') +
+      ' <span style="color:var(--gold)">× ' + it.quantity + '</span></span>' +
+      '<span style="white-space:nowrap">' + line.toFixed(2) + ' د.أ</span></div>';
+  }).join('');
+
+  const row = (label, value) => value
+    ? '<div style="display:flex;justify-content:space-between;gap:12px"><span style="color:var(--muted)">' + label + '</span><span style="font-weight:600;text-align:left">' + value + '</span></div>'
+    : '';
+
+  let phoneHtml = phone ? esc(phone) : '<span style="color:var(--muted)">غير متوفر</span>';
+  if (phone) {
+    const waNum = phone.replace(/\D/g, '').replace(/^0/, '962');
+    phoneHtml = '<span dir="ltr">' + esc(phone) + '</span> · <a href="https://wa.me/' + waNum + '" target="_blank" style="color:#25D366;text-decoration:none">واتساب ↗</a>';
+  }
+
+  document.getElementById('odBody').innerHTML =
+    '<div style="background:var(--panel2);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">' +
+      row('العميل', esc(cust.name || 'عميل')) +
+      row('الهاتف', phoneHtml) +
+      row('القناة', esc(chLabel)) +
+      row('المنطقة', o.zone ? esc(o.zone) : '') +
+      row('طريقة التوصيل', deliv) +
+      row('التاريخ', new Date(o.created_at).toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' })) +
+    '</div>' +
+    '<div><div style="font-weight:700;margin-bottom:6px">المنتجات المطلوبة</div>' + (itemsHtml || '<span style="color:var(--muted)">—</span>') + '</div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;padding-top:6px">' +
+      '<span>الإجمالي</span><span style="color:var(--gold)">' + Number(o.total).toFixed(2) + ' د.أ</span></div>';
+
+  document.getElementById('ordDetailBg').classList.add('open');
+}
+function closeOrderDetail() { document.getElementById('ordDetailBg').classList.remove('open'); }
+
+/* --- طباعة كليبة الطلب (للصقها على الطرد) --- */
+function printOrderLabel() {
+  const o = ordCache.find(x => x.id === currentDetailOrderId);
+  if (!o) return;
+  const cust = o.customers || {};
+  const shortId = (o.id || '').slice(0, 8).toUpperCase();
+  const deliv = o.delivery_method === 'basira' ? 'كابتن بصيرة' : 'دلفيري المتجر';
+  const itemsRows = (o.order_items || []).map(it => {
+    const v = it.variants || {};
+    const pname = (v.products && v.products.name) || 'منتج';
+    const variant = [v.color, v.size].filter(Boolean).join(' / ');
+    return '<tr><td>' + escP(pname) + (variant ? ' (' + escP(variant) + ')' : '') + '</td>' +
+      '<td style="text-align:center">' + it.quantity + '</td>' +
+      '<td style="text-align:left;white-space:nowrap">' + (Number(it.unit_price) * it.quantity).toFixed(2) + '</td></tr>';
+  }).join('');
+
+  function escP(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  const html =
+'<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>كليبة الطلب ' + shortId + '</title>' +
+'<style>' +
+'@page { size: 80mm auto; margin: 4mm; }' +
+'* { font-family: "Segoe UI", Tahoma, sans-serif; box-sizing: border-box; }' +
+'body { margin: 0; padding: 6px; color: #000; }' +
+'.store { text-align: center; font-size: 18px; font-weight: 800; margin-bottom: 2px; }' +
+'.tag { text-align: center; font-size: 10px; color: #444; margin-bottom: 8px; }' +
+'.oid { text-align: center; font-size: 12px; font-weight: 700; border: 1px dashed #000; border-radius: 6px; padding: 4px; margin-bottom: 8px; }' +
+'.line { display: flex; justify-content: space-between; font-size: 12.5px; padding: 2px 0; }' +
+'.line b { font-weight: 700; }' +
+'hr { border: none; border-top: 1px dashed #999; margin: 8px 0; }' +
+'table { width: 100%; border-collapse: collapse; font-size: 12px; }' +
+'th { text-align: right; border-bottom: 1px solid #000; padding: 3px 2px; font-size: 11px; }' +
+'th:nth-child(2){text-align:center} th:nth-child(3){text-align:left}' +
+'td { padding: 4px 2px; border-bottom: 1px dotted #ccc; vertical-align: top; }' +
+'.total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-top: 8px; border-top: 2px solid #000; padding-top: 6px; }' +
+'.foot { text-align: center; font-size: 9px; color: #888; margin-top: 10px; }' +
+'</style></head><body>' +
+'<div class="store">نور</div>' +
+'<div class="tag">بصيرة · نرى ما لا تراه</div>' +
+'<div class="oid">طلب رقم: ' + shortId + '</div>' +
+'<div class="line"><span>العميل</span><b>' + escP(cust.name || 'عميل') + '</b></div>' +
+(cust.phone ? '<div class="line"><span>الهاتف</span><b dir="ltr">' + escP(cust.phone) + '</b></div>' : '') +
+(o.zone ? '<div class="line"><span>المنطقة</span><b>' + escP(o.zone) + '</b></div>' : '') +
+'<div class="line"><span>التوصيل</span><b>' + deliv + '</b></div>' +
+'<div class="line"><span>التاريخ</span><b>' + new Date(o.created_at).toLocaleString('ar', { dateStyle: 'short', timeStyle: 'short' }) + '</b></div>' +
+'<hr>' +
+'<table><thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th></tr></thead><tbody>' + itemsRows + '</tbody></table>' +
+'<div class="total"><span>الإجمالي</span><span>' + Number(o.total).toFixed(2) + ' د.أ</span></div>' +
+'<div class="foot">شكراً لطلبكم 🛍️</div>' +
+'</body></html>';
+
+  const w = window.open('', '_blank', 'width=380,height=600');
+  if (!w) { showErr('المتصفح منع النافذة — اسمح بالنوافذ المنبثقة للطباعة.'); return; }
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); }, 300);
+}
+
+async function changeOrderStatus(orderId, newStatus) {
+  if (newStatus === 'canceled' && !confirm('إلغاء الطلب؟ الكميات المحجوزة رح ترجع للمخزون.')) return;
+  if (newStatus === 'rejected' && !confirm('الزبون رفض الاستلام؟ الطلب رح يتوثّق كمرفوض والكمية بترجع للمخزون.')) return;
+  try {
+    await BasiraAPI.orders.setStatus(orderId, newStatus);
+    await loadOrders();
+    prodLoaded = false; /* المخزون تغيّر — أعد تحميل المنتجات عند فتحها */
+  } catch (e) {
+    showErr('تعذّر تغيير الحالة: ' + e.message);
+  }
+}
+
+/* --- مودال طلب جديد --- */
+function buildFlatVariants() {
+  flatVariants = [];
+  for (const p of prodCache) {
+    if (p.is_active === false) continue; /* المؤرشف مش للبيع */
+    for (const v of (p.variants || [])) {
+      const avail = v.stock - v.reserved;
+      flatVariants.push({
+        id: v.id,
+        label: p.name + ' — ' + [v.color, v.size].filter(Boolean).join(' · ') + ' — ' + Number((v.price === 0 || v.price) ? v.price : p.price).toFixed(2) + ' د.أ',
+        price: Number((v.price === 0 || v.price) ? v.price : p.price),
+        avail
+      });
+    }
+  }
+}
+
+function omItemRow(it, i) {
+  const opts = flatVariants.map(fv =>
+    '<option value="' + fv.id + '"' + (fv.id === it.variantId ? ' selected' : '') + (fv.avail <= 0 ? ' disabled' : '') + '>' +
+    esc(fv.label) + (fv.avail <= 0 ? ' (نفد)' : '') + '</option>').join('');
+  const fv = flatVariants.find(x => x.id === it.variantId);
+  return '<div class="ord-item-row" data-oi="' + i + '">' +
+    '<select data-f="variant"><option value="">— اختر منتج —</option>' + opts + '</select>' +
+    '<input type="text" class="oi-qty" value="' + it.qty + '" inputmode="numeric" data-f="qty">' +
+    '<span class="oi-avail">' + (fv ? 'متاح: ' + fv.avail : '') + '</span>' +
+    '<button type="button" class="var-del" data-delitem="' + i + '">✕</button></div>';
+}
+
+function renderOmItems() {
+  document.getElementById('omItems').innerHTML = omItems.map(omItemRow).join('');
+  document.querySelectorAll('#omItems select').forEach(s => s.addEventListener('change', () => { syncOmItems(); renderOmItems(); }));
+  document.querySelectorAll('#omItems .oi-qty').forEach(inp => inp.addEventListener('input', () => { syncOmItems(); updateOmTotal(); }));
+  document.querySelectorAll('[data-delitem]').forEach(b => b.addEventListener('click', () => {
+    if (omItems.length <= 1) return;
+    syncOmItems(); omItems.splice(+b.dataset.delitem, 1); renderOmItems();
+  }));
+  updateOmTotal();
+}
+
+function syncOmItems() {
+  document.querySelectorAll('#omItems .ord-item-row').forEach(row => {
+    const i = +row.dataset.oi;
+    omItems[i].variantId = row.querySelector('[data-f=variant]').value || null;
+    omItems[i].qty = Math.max(1, parseInt(row.querySelector('[data-f=qty]').value) || 1);
+  });
+}
+
+function updateOmTotal() {
+  let t = 0;
+  for (const it of omItems) {
+    const fv = flatVariants.find(x => x.id === it.variantId);
+    if (fv) t += fv.price * it.qty;
+  }
+  document.getElementById('omTotal').textContent = t.toFixed(2) + ' د.أ';
+}
+
+async function openOrderModal() {
+  /* لازم المنتجات محمّلة عشان القائمة */
+  if (!prodLoaded) await loadProducts();
+  buildFlatVariants();
+  if (!flatVariants.length) { showErr('ضيف منتجات بمخزون أول — قسم المنتجات والمخزون.'); return; }
+  document.getElementById('omCustName').value = '';
+  document.getElementById('omCustPhone').value = '';
+  document.getElementById('omZone').value = '';
+  document.getElementById('omDeliv').value = 'basira';
+  omItems = [{ variantId: null, qty: 1 }];
+  renderOmItems();
+  document.getElementById('ordModalBg').classList.add('open');
+  setTimeout(() => document.getElementById('omCustName').focus(), 50);
+}
+function closeOrderModal() { document.getElementById('ordModalBg').classList.remove('open'); }
+
+/* التنقّل بين خانات مودال الطلب بزر Enter */
+document.getElementById('ordModalBg').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const target = e.target;
+  if (target.tagName !== 'INPUT') return;
+  e.preventDefault();
+  const fields = [
+    document.getElementById('omCustName'),
+    document.getElementById('omCustPhone'),
+    document.getElementById('omZone')
+  ];
+  const idx = fields.indexOf(target);
+  if (idx > -1 && idx < fields.length - 1) {
+    fields[idx + 1].focus();
+  } else {
+    /* بعد الخانات النصية، ركّز على أول قائمة منتج */
+    const firstSelect = document.querySelector('#omItems select');
+    if (firstSelect && target !== firstSelect) firstSelect.focus();
+  }
+});
+
+async function saveOrder() {
+  syncOmItems();
+  const custName = document.getElementById('omCustName').value.trim();
+  if (custName.length < 2) { showErr('اكتب اسم العميل'); return; }
+  const items = omItems.filter(it => it.variantId);
+  if (!items.length) { showErr('اختر منتج واحد على الأقل'); return; }
+  const btn = document.getElementById('omSave');
+  btn.disabled = true; btn.textContent = 'جارٍ الإنشاء...';
+  try {
+    /* ١. العميل: أوجده أو كوّنه (بصيرة تتذكّر) */
+    const phone = document.getElementById('omCustPhone').value.trim() || null;
+    const customer = await BasiraAPI.customers.findOrCreate({
+      socialId: phone || ('manual-' + custName),
+      channelType: 'manual',
+      name: custName, phone
+    });
+    /* ٢. الطلب — بيحجز الكميات تلقائياً */
+    await BasiraAPI.orders.create({
+      customerId: customer.id,
+      items: items.map(it => {
+        const fv = flatVariants.find(x => x.id === it.variantId);
+        return { variantId: it.variantId, quantity: it.qty, unitPrice: fv.price };
+      }),
+      zone: document.getElementById('omZone').value.trim() || null,
+      deliveryMethod: document.getElementById('omDeliv').value
+    });
+    closeOrderModal();
+    await loadOrders();
+    prodLoaded = false; /* المخزون انحجز — أعد التحميل عند فتح المنتجات */
+    /* حدّث عدّاد العملاء */
+    try { document.getElementById('kpiCustomers').textContent = (await BasiraAPI.customers.list()).length; } catch (_) {}
+  } catch (e) {
+    if (String(e.message).startsWith('OUT_OF_STOCK')) showErr('الكمية المطلوبة غير متوفرة بالمخزون — راجع المتاح.');
+    else showErr('تعذّر إنشاء الطلب: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'إنشاء الطلب';
+  }
+}
+
+/* --- ربط أحداث الطلبات --- */
+document.getElementById('btnAddOrder').addEventListener('click', openOrderModal);
+document.getElementById('omCancel').addEventListener('click', closeOrderModal);
+document.getElementById('omSave').addEventListener('click', saveOrder);
+document.getElementById('omAddItem').addEventListener('click', () => { syncOmItems(); omItems.push({ variantId: null, qty: 1 }); renderOmItems(); });
+document.getElementById('ordModalBg').addEventListener('click', (e) => { if (e.target.id === 'ordModalBg') closeOrderModal(); });
+document.getElementById('odClose').addEventListener('click', closeOrderDetail);
+document.getElementById('odPrint').addEventListener('click', printOrderLabel);
+document.getElementById('ordDetailBg').addEventListener('click', (e) => { if (e.target.id === 'ordDetailBg') closeOrderDetail(); });
+document.querySelectorAll('[data-otab]').forEach(t => t.addEventListener('click', () => {
+  ordFilter = t.dataset.otab;
+  document.querySelectorAll('[data-otab]').forEach(x => x.classList.toggle('active', x === t));
+  renderOrders();
+}));
+document.querySelector('[data-view=orders]').addEventListener('click', () => { if (!ordLoaded) loadOrders(); });
+
+/* ============================================================
+   قسم المحادثات — عرض ورد يدوي
+   ============================================================ */
+/* الشعارات الرسمية للقنوات (SVG بألوانها الأصلية) */
+const CH_ICON = {
+  whatsapp: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.07-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#25D366"/><path d="M8.5 7.5c-.3 0-.7.1-1 .5-.3.4-1.2 1.1-1.2 2.7s1.2 3.2 1.4 3.4c.2.2 2.3 3.7 5.7 5 2.8 1.1 3.4.9 4 .8.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.4-.3-.7-.5-.3-.2-1.9-1-2.2-1.1-.3-.1-.5-.2-.7.2-.2.4-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3-.2-.3 0-.5.1-.7.1-.1.3-.4.5-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.8-1-2.4-.2-.6-.5-.5-.7-.5h-.6z" fill="#fff"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="#1877F2"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#igG)"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/><defs><linearGradient id="igG" x1="0" y1="0" x2="24" y2="24"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#dc2743"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs></svg>',
+  messenger: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.63 1.22 4.99 3.13 6.55V22l4.3-2.37C10.1 19.88 11.03 20 12 20c5.52 0 10-4.03 10-9s-4.48-9-10-9z" fill="#0084FF"/><path d="M6.5 13.5L11 8.7l2.5 2.4L16.8 8.7l-4.3 4.8-2.5-2.4z" fill="#fff"/></svg>',
+  telegram: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><circle cx="12" cy="12" r="10" fill="#29A9EB"/><path d="M5.5 11.8l11-4.24c.51-.19.96.12.79.9l-1.87 8.82c-.14.63-.52.79-1.05.49l-2.9-2.14-1.4 1.35c-.15.15-.29.29-.6.29l.21-3.05 5.5-4.97c.24-.21-.05-.33-.37-.12L7.3 12.6l-2.9-.9c-.63-.2-.64-.63.13-.93z" fill="#fff"/></svg>',
+  manual: '<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" fill="#8b7aa8"/><path d="M8 12h8M12 8v8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>'
+};
+const CSTATUS = {
+  open:        { ar: 'مفتوحة',   cls: 'cs-open' },
+  needs_human: { ar: 'تحتاج رد', cls: 'cs-needs_human' },
+  closed:      { ar: 'مغلقة',    cls: 'cs-closed' }
+};
+let convCache = [];
+let activeConvId = null;
+let convLoaded = false;
+
+async function loadConversations() {
+  const list = document.getElementById('convList');
+  try {
+    convCache = await BasiraAPI.conversations.list();
+    renderConvList();
+    document.getElementById('kpiConvs').textContent = convCache.length;
+    convLoaded = true;
+  } catch (e) {
+    list.innerHTML = '<div class="conv-empty">تعذّر التحميل: ' + e.message + '</div>';
+  }
+}
+
+function renderConvList() {
+  const list = document.getElementById('convList');
+  if (!convCache.length) {
+    list.innerHTML = '<div class="conv-empty">💬 لسا ما في محادثات<br>لما تربط قناة (واتساب/فيسبوك) رح تظهر محادثات عملائك هون</div>';
+    return;
+  }
+  list.innerHTML = convCache.map(c => {
+    const cust = c.customers || {};
+    const st = CSTATUS[c.status] || CSTATUS.open;
+    const ch = CH_ICON[cust.channel_type] || CH_ICON.manual;
+    return '<div class="conv-item' + (c.id === activeConvId ? ' active' : '') + '" data-conv="' + c.id + '">' +
+      '<div class="ci-top"><span class="ci-ch">' + ch + '</span>' +
+      '<span class="ci-name">' + esc(cust.name || 'عميل') + '</span>' +
+      '<span class="ci-status ' + st.cls + '">' + st.ar + '</span></div>' +
+      '<div class="ci-time">' + new Date(c.last_msg_at).toLocaleString('ar', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</div>' +
+      '</div>';
+  }).join('');
+  list.querySelectorAll('[data-conv]').forEach(el => el.addEventListener('click', () => openConversation(el.dataset.conv)));
+}
+
+async function openConversation(convId) {
+  activeConvId = convId;
+  renderConvList();
+  const conv = convCache.find(c => c.id === convId);
+  const cust = (conv && conv.customers) || {};
+  const main = document.getElementById('convMain');
+  main.innerHTML = '<div class="conv-head"><span>' + (CH_ICON[cust.channel_type] || CH_ICON.manual) + '</span>' +
+    '<span class="ch-name">' + esc(cust.name || 'عميل') + '</span></div>' +
+    '<div class="conv-msgs" id="convMsgs"><div class="conv-empty">جارٍ تحميل الرسائل...</div></div>' +
+    '<div class="conv-reply"><input type="text" id="replyInput" placeholder="اكتب ردّك..."><button id="replyBtn">إرسال</button></div>';
+
+  document.getElementById('replyBtn').addEventListener('click', sendReply);
+  document.getElementById('replyInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendReply(); });
+  document.getElementById('replyInput').focus();
+
+  try {
+    const msgs = await BasiraAPI.conversations.messages(convId);
+    renderMessages(msgs);
+  } catch (e) {
+    document.getElementById('convMsgs').innerHTML = '<div class="conv-empty">تعذّر تحميل الرسائل: ' + e.message + '</div>';
+  }
+}
+
+function renderMessages(msgs) {
+  const box = document.getElementById('convMsgs');
+  if (!msgs.length) {
+    box.innerHTML = '<div class="conv-empty">ما في رسائل بعد</div>';
+    return;
+  }
+  const tag = { customer: 'العميل', ai: 'بصيرة', human: 'أنت' };
+  box.innerHTML = msgs.map(m => {
+    const cls = m.sender === 'customer' ? 'msg-customer' : (m.sender === 'ai' ? 'msg-ai' : 'msg-human');
+    const t = new Date(m.created_at).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' });
+    return '<div class="msg-bubble ' + cls + '">' + esc(m.content || '') +
+      '<div class="msg-meta"><span class="msg-sender-tag">' + (tag[m.sender] || '') + '</span> · ' + t + '</div></div>';
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendReply() {
+  const input = document.getElementById('replyInput');
+  const text = input.value.trim();
+  if (!text || !activeConvId) return;
+  input.value = '';
+  try {
+    await BasiraAPI.conversations.addMessage(activeConvId, { sender: 'human', content: text });
+    const msgs = await BasiraAPI.conversations.messages(activeConvId);
+    renderMessages(msgs);
+    /* حدّث وقت آخر رسالة بالقائمة */
+    const conv = convCache.find(c => c.id === activeConvId);
+    if (conv) { conv.last_msg_at = new Date().toISOString(); renderConvList(); }
+  } catch (e) {
+    showErr('تعذّر إرسال الرد: ' + e.message);
+    input.value = text;
+  }
+}
+
+document.querySelector('[data-view=conversations]').addEventListener('click', () => { if (!convLoaded) loadConversations(); });
+
+/* ============================================================
+   قسم الإعدادات — القنوات (self-service)
+   ============================================================ */
+const CH_LABELS = {
+  whatsapp:  { ar: 'واتساب',   idLabel: 'رقم الواتساب (مع رمز الدولة)', handleLabel: 'اسم الحساب', hint: 'اربط رقم واتساب بزنس لاستقبال رسائل عملائك.' },
+  facebook:  { ar: 'فيسبوك',   idLabel: 'معرّف الصفحة (Page ID)', handleLabel: 'اسم الصفحة', hint: 'اربط صفحة فيسبوك للرد على التعليقات والرسائل.' },
+  instagram: { ar: 'إنستغرام', idLabel: 'معرّف الحساب', handleLabel: 'اسم المستخدم (@)', hint: 'اربط حساب إنستغرام بزنس.' },
+  messenger: { ar: 'ماسنجر',   idLabel: 'معرّف الصفحة', handleLabel: 'اسم الصفحة', hint: 'اربط ماسنجر المرتبط بصفحتك.' }
+};
+let chCache = [];
+let chLoaded = false;
+let addingChType = null;
+
+/* ضع الشعارات بأزرار الإضافة */
+function paintChannelLogos() {
+  const map = { waLogo: 'whatsapp', fbLogo: 'facebook', igLogo: 'instagram', msLogo: 'messenger' };
+  for (const [id, type] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = CH_ICON[type];
+  }
+}
+
+async function loadSettings() {
+  paintChannelLogos();
+  /* معلومات المتجر من السياق */
+  const ctx = BasiraAPI.auth.context();
+  if (ctx && ctx.membership) {
+    document.getElementById('storeInfo').innerHTML =
+      'اسم المتجر: <b>' + esc(ctx.membership.merchant_name) + '</b><br>' +
+      'صاحب الحساب: <b>' + esc(ctx.membership.member_name) + '</b> (' + (ctx.membership.is_owner ? 'المالك' : esc(ctx.membership.role_name || 'عضو')) + ')';
+  }
+  try {
+    chCache = await BasiraAPI.channels.list();
+    renderChannels();
+    chLoaded = true;
+  } catch (e) {
+    document.getElementById('chList').innerHTML = '<div class="sc-sub">تعذّر التحميل: ' + e.message + '</div>';
+  }
+}
+
+function renderChannels() {
+  const box = document.getElementById('chList');
+  if (!chCache.length) {
+    box.innerHTML = '<div class="sc-sub" style="padding:10px 0;color:var(--dim2)">ما في قنوات مربوطة بعد — أضف وحدة من تحت 👇</div>';
+    return;
+  }
+  box.innerHTML = chCache.map(c => {
+    const lbl = CH_LABELS[c.type] || { ar: c.type };
+    return '<div class="ch-row">' +
+      '<div class="ch-logo">' + (CH_ICON[c.type] || '') + '</div>' +
+      '<div class="ch-info"><div class="ch-type">' + lbl.ar + '</div>' +
+      '<div class="ch-handle">' + esc(c.handle || c.page_id || '—') + '</div></div>' +
+      '<span class="ch-toggle ' + (c.is_active ? 'on' : '') + '" data-toggle="' + c.id + '">' + (c.is_active ? '● مفعّلة' : '○ موقوفة') + '</span>' +
+      '<button class="btn-sm danger" data-delch="' + c.id + '">حذف</button>' +
+      '</div>';
+  }).join('');
+  box.querySelectorAll('[data-toggle]').forEach(b => b.addEventListener('click', () => toggleChannel(b.dataset.toggle)));
+  box.querySelectorAll('[data-delch]').forEach(b => b.addEventListener('click', () => removeChannel(b.dataset.delch)));
+}
+
+function openChModal(type) {
+  addingChType = type;
+  const lbl = CH_LABELS[type];
+  document.getElementById('chModalTitle').textContent = 'ربط ' + lbl.ar;
+  document.getElementById('chModalHint').textContent = lbl.hint;
+  document.getElementById('chHandleLabel').textContent = lbl.handleLabel;
+  document.getElementById('chIdLabel').textContent = lbl.idLabel;
+  document.getElementById('chHandle').value = '';
+  document.getElementById('chPageId').value = '';
+  document.getElementById('chToken').value = '';
+  document.getElementById('chModalBg').classList.add('open');
+  setTimeout(() => document.getElementById('chHandle').focus(), 50);
+}
+function closeChModal() { document.getElementById('chModalBg').classList.remove('open'); }
+
+async function saveChannel() {
+  const handle = document.getElementById('chHandle').value.trim();
+  const pageId = document.getElementById('chPageId').value.trim();
+  const token = document.getElementById('chToken').value.trim();
+  if (!handle) { showErr('اكتب اسم الحساب/الصفحة'); return; }
+  const btn = document.getElementById('chSave');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+  try {
+    await BasiraAPI.channels.create({
+      type: addingChType,
+      handle,
+      pageId: pageId || null,
+      credentials: token ? { token } : {}
+    });
+    closeChModal();
+    await loadSettings();
+  } catch (e) {
+    showErr('تعذّر حفظ القناة: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'حفظ القناة';
+  }
+}
+
+async function toggleChannel(id) {
+  const c = chCache.find(x => x.id === id);
+  try {
+    await BasiraAPI.channels.setActive(id, !c.is_active);
+    await loadSettings();
+  } catch (e) { showErr('تعذّر التغيير: ' + e.message); }
+}
+
+async function removeChannel(id) {
+  const c = chCache.find(x => x.id === id);
+  const lbl = CH_LABELS[c.type] || { ar: c.type };
+  if (!confirm('حذف قناة ' + lbl.ar + '؟')) return;
+  try {
+    await BasiraAPI.channels.remove(id);
+    await loadSettings();
+  } catch (e) { showErr('تعذّر الحذف: ' + e.message); }
+}
+
+document.querySelectorAll('[data-addch]').forEach(b => b.addEventListener('click', () => openChModal(b.dataset.addch)));
+document.getElementById('chCancel').addEventListener('click', closeChModal);
+document.getElementById('chSave').addEventListener('click', saveChannel);
+document.getElementById('chModalBg').addEventListener('click', (e) => { if (e.target.id === 'chModalBg') closeChModal(); });
+document.querySelector('[data-view=settings]').addEventListener('click', () => { if (!chLoaded) loadSettings(); });
+
+/* ============================================================
+   فريق الذكاء — موظفون بأدوار (self-service)
+   ============================================================ */
+const ROLE_LABELS = {
+  replies:      'الرد على العملاء',
+  sales:        'المبيعات والإقناع',
+  coordination: 'تنسيق الطلبات',
+  delivery:     'التوصيل والكباتن',
+  followup:     'المتابعة',
+  custom:       'دور مخصّص'
+};
+const TONE_LABELS = { dialect: 'عامية', friendly: 'ودّي', formal: 'رسمي' };
+const HANDOFF_LABELS = { auto: 'تحويل تلقائي', smart: 'تحويل ذكي', always_human: 'يقترح فقط' };
+
+/* الفريق الافتراضي — يُقترح مرة عند فراغ الفريق (عدا الموظف الأساسي) */
+const DEFAULT_TEAM = [
+  { role: 'sales',        displayName: 'موظف المبيعات', icon: '🛍️', persona: 'يحوّل المحادثة لطلب: يقترح، يقنع، يقفل البيع', sortOrder: 1 },
+  { role: 'coordination', displayName: 'موظف التنسيق',  icon: '📋', persona: 'ينظّم الطلبات ويأكّد التفاصيل ويرتّب الأولويات', sortOrder: 2 },
+  { role: 'delivery',     displayName: 'موظف التوصيل',  icon: '🚚', persona: 'ينسّق مع الكباتن ويبعت تفاصيل الطلب ويتابع التسليم', sortOrder: 3 },
+  { role: 'followup',     displayName: 'موظف المتابعة', icon: '🔔', persona: 'يتابع العملاء بعد البيع ضمن حدود القواعد', sortOrder: 4 }
+];
+let teamCache = [];
+let teamLoaded = false;
+let editingAgentId = null;
+
+async function loadTeam() {
+  const grid = document.getElementById('teamGrid');
+  try {
+    teamCache = await BasiraAPI.aiTeam.list();
+    renderTeam();
+    teamLoaded = true;
+  } catch (e) {
+    grid.innerHTML = '<div class="empty-state">تعذّر التحميل: ' + e.message + '</div>';
+  }
+}
+
+function renderTeam() {
+  const grid = document.getElementById('teamGrid');
+  if (!teamCache.length) {
+    grid.innerHTML = '<div class="empty-state">ما في موظفين — اضغط "+ موظف جديد"</div>';
+    return;
+  }
+  let html = teamCache.map(a => {
+    const role = ROLE_LABELS[a.role] || a.role;
+    return '<div class="agent-card' + (a.is_active === false ? ' off' : '') + '">' +
+      '<div class="ag-head"><div class="ag-icon">' + esc(a.icon || '🤖') + '</div>' +
+      '<div><div class="ag-name">' + esc(a.display_name || 'موظف') + '</div>' +
+      '<div class="ag-role">' + esc(role) + '</div></div></div>' +
+      '<div class="ag-persona">' + esc(a.persona || 'بدون وصف') + '</div>' +
+      '<div class="ag-meta">' +
+      '<span class="ag-tag">🗣️ ' + (TONE_LABELS[a.tone] || a.tone) + '</span>' +
+      '<span class="ag-tag">🤝 ' + (HANDOFF_LABELS[a.handoff] || a.handoff || 'تلقائي') + '</span>' +
+      '</div>' +
+      '<div class="ag-foot">' +
+      '<span class="ag-toggle ' + (a.is_active !== false ? 'on' : '') + '" data-agtoggle="' + a.id + '">' + (a.is_active !== false ? '● مفعّل' : '○ موقوف') + '</span>' +
+      '<div class="ag-actions">' +
+      '<button class="btn-sm" data-agedit="' + a.id + '">تعديل</button>' +
+      '<button class="btn-sm danger" data-agdel="' + a.id + '">حذف</button>' +
+      '</div></div></div>';
+  }).join('');
+
+  /* اقتراح إضافة الفريق الافتراضي لو في موظف واحد بس */
+  if (teamCache.length === 1) {
+    html += '<div class="agent-card" style="border-style:dashed;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px">' +
+      '<div style="font-size:13px;color:var(--dim);line-height:1.7">بصيرة تقترح فريق كامل:<br>مبيعات · تنسيق · توصيل · متابعة</div>' +
+      '<button class="btn-add" id="btnSeedTeam">+ أضف الفريق المقترح</button></div>';
+  }
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('[data-agtoggle]').forEach(b => b.addEventListener('click', () => toggleAgent(b.dataset.agtoggle)));
+  grid.querySelectorAll('[data-agedit]').forEach(b => b.addEventListener('click', () => openAgentModal(b.dataset.agedit)));
+  grid.querySelectorAll('[data-agdel]').forEach(b => b.addEventListener('click', () => deleteAgent(b.dataset.agdel)));
+  const seed = document.getElementById('btnSeedTeam');
+  if (seed) seed.addEventListener('click', seedDefaultTeam);
+}
+
+async function seedDefaultTeam() {
+  const btn = document.getElementById('btnSeedTeam');
+  btn.disabled = true; btn.textContent = 'جارٍ الإضافة...';
+  try {
+    for (const a of DEFAULT_TEAM) {
+      await BasiraAPI.aiTeam.create({ ...a, tone: 'dialect', handoff: 'auto' });
+    }
+    await loadTeam();
+  } catch (e) {
+    showErr('تعذّرت الإضافة: ' + e.message);
+    btn.disabled = false; btn.textContent = '+ أضف الفريق المقترح';
+  }
+}
+
+function openAgentModal(id) {
+  editingAgentId = id || null;
+  const a = id ? teamCache.find(x => x.id === id) : null;
+  document.getElementById('agentModalTitle').textContent = id ? 'تعديل الموظف' : 'موظف جديد';
+  document.getElementById('agName').value = a ? (a.display_name || '') : '';
+  document.getElementById('agIcon').value = a ? (a.icon || '🤖') : '🤖';
+  document.getElementById('agRole').value = a ? (a.role || 'replies') : 'replies';
+  document.getElementById('agPersona').value = a ? (a.persona || '') : '';
+  document.getElementById('agTone').value = a ? (a.tone || 'dialect') : 'dialect';
+  document.getElementById('agHandoff').value = a ? (a.handoff || 'auto') : 'auto';
+  document.getElementById('agentModalBg').classList.add('open');
+  setTimeout(() => document.getElementById('agName').focus(), 50);
+}
+function closeAgentModal() { document.getElementById('agentModalBg').classList.remove('open'); }
+
+async function saveAgent() {
+  const name = document.getElementById('agName').value.trim();
+  if (name.length < 2) { showErr('اكتب اسم الموظف'); return; }
+  const fields = {
+    display_name: name,
+    icon: document.getElementById('agIcon').value.trim() || '🤖',
+    role: document.getElementById('agRole').value,
+    persona: document.getElementById('agPersona').value.trim() || null,
+    tone: document.getElementById('agTone').value,
+    handoff: document.getElementById('agHandoff').value
+  };
+  const btn = document.getElementById('agSave');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+  try {
+    if (editingAgentId) {
+      await BasiraAPI.aiTeam.update(editingAgentId, fields);
+    } else {
+      await BasiraAPI.aiTeam.create({
+        role: fields.role, displayName: fields.display_name, icon: fields.icon,
+        persona: fields.persona, tone: fields.tone, handoff: fields.handoff,
+        sortOrder: teamCache.length
+      });
+    }
+    closeAgentModal();
+    await loadTeam();
+  } catch (e) {
+    showErr('تعذّر الحفظ: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'حفظ';
+  }
+}
+
+async function toggleAgent(id) {
+  const a = teamCache.find(x => x.id === id);
+  try {
+    await BasiraAPI.aiTeam.setActive(id, a.is_active === false);
+    await loadTeam();
+  } catch (e) { showErr('تعذّر التغيير: ' + e.message); }
+}
+
+async function deleteAgent(id) {
+  const a = teamCache.find(x => x.id === id);
+  if (!confirm('حذف "' + (a.display_name || 'الموظف') + '"؟')) return;
+  try {
+    await BasiraAPI.aiTeam.remove(id);
+    await loadTeam();
+  } catch (e) { showErr('تعذّر الحذف: ' + e.message); }
+}
+
+document.getElementById('btnAddAgent').addEventListener('click', () => openAgentModal(null));
+document.getElementById('agCancel').addEventListener('click', closeAgentModal);
+document.getElementById('agSave').addEventListener('click', saveAgent);
+document.getElementById('agentModalBg').addEventListener('click', (e) => { if (e.target.id === 'agentModalBg') closeAgentModal(); });
+document.querySelector('[data-view=team]').addEventListener('click', () => { if (!teamLoaded) loadTeam(); });
+
+/* ============================================================
+   معلومات المتجر — دفتر معرفة الموظف
+   ============================================================ */
+let kbLoaded = false;
+let faqCache = [];
+let editingFaqId = null;
+
+async function loadKnowledge() {
+  try {
+    const info = await BasiraAPI.knowledge.getInfo();
+    if (info) {
+      document.getElementById('kbLocation').value = info.location_text || '';
+      document.getElementById('kbLocationUrl').value = info.location_url || '';
+      document.getElementById('kbHours').value = info.hours || '';
+      document.getElementById('kbPhones').value = info.phones || '';
+      document.getElementById('kbPayment').value = info.payment || '';
+      document.getElementById('kbDelivery').value = info.delivery_info || '';
+      document.getElementById('kbReturn').value = info.return_policy || '';
+      document.getElementById('kbExtra').value = info.extra_notes || '';
+    }
+    faqCache = await BasiraAPI.knowledge.listFaq();
+    renderFaq();
+    kbLoaded = true;
+  } catch (e) {
+    showErr('تعذّر تحميل المعلومات: ' + e.message);
+  }
+}
+
+async function saveStoreInfo() {
+  const btn = document.getElementById('kbSaveBtn');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+  try {
+    await BasiraAPI.knowledge.saveInfo({
+      location_text: document.getElementById('kbLocation').value.trim() || null,
+      location_url: document.getElementById('kbLocationUrl').value.trim() || null,
+      hours: document.getElementById('kbHours').value.trim() || null,
+      phones: document.getElementById('kbPhones').value.trim() || null,
+      payment: document.getElementById('kbPayment').value.trim() || null,
+      delivery_info: document.getElementById('kbDelivery').value.trim() || null,
+      return_policy: document.getElementById('kbReturn').value.trim() || null,
+      extra_notes: document.getElementById('kbExtra').value.trim() || null
+    });
+    const saved = document.getElementById('kbSaved');
+    saved.style.display = 'inline';
+    setTimeout(() => { saved.style.display = 'none'; }, 2500);
+  } catch (e) {
+    showErr('تعذّر الحفظ: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'حفظ المعلومات';
+  }
+}
+
+function renderFaq() {
+  const box = document.getElementById('faqList');
+  if (!faqCache.length) {
+    box.innerHTML = '<div class="sc-sub" style="color:var(--dim2);padding:6px 0">ما في أسئلة بعد — ضيف أول سؤال 👇</div>';
+    return;
+  }
+  box.innerHTML = faqCache.map(f =>
+    '<div class="faq-item"><div class="faq-q">' + esc(f.question) + '</div>' +
+    '<div class="faq-a">' + esc(f.answer) + '</div>' +
+    '<div class="faq-actions">' +
+    '<button class="btn-sm" data-faqedit="' + f.id + '">تعديل</button>' +
+    '<button class="btn-sm danger" data-faqdel="' + f.id + '">حذف</button>' +
+    '</div></div>').join('');
+  box.querySelectorAll('[data-faqedit]').forEach(b => b.addEventListener('click', () => openFaqModal(b.dataset.faqedit)));
+  box.querySelectorAll('[data-faqdel]').forEach(b => b.addEventListener('click', () => deleteFaq(b.dataset.faqdel)));
+}
+
+function openFaqModal(id) {
+  editingFaqId = id || null;
+  const f = id ? faqCache.find(x => x.id === id) : null;
+  document.getElementById('faqModalTitle').textContent = id ? 'تعديل السؤال' : 'سؤال جديد';
+  document.getElementById('faqQ').value = f ? f.question : '';
+  document.getElementById('faqA').value = f ? f.answer : '';
+  document.getElementById('faqModalBg').classList.add('open');
+  setTimeout(() => document.getElementById('faqQ').focus(), 50);
+}
+function closeFaqModal() { document.getElementById('faqModalBg').classList.remove('open'); }
+
+async function saveFaq() {
+  const q = document.getElementById('faqQ').value.trim();
+  const a = document.getElementById('faqA').value.trim();
+  if (q.length < 3 || a.length < 2) { showErr('اكتب السؤال والجواب'); return; }
+  const btn = document.getElementById('faqSave');
+  btn.disabled = true; btn.textContent = 'جارٍ الحفظ...';
+  try {
+    if (editingFaqId) await BasiraAPI.knowledge.updateFaq(editingFaqId, { question: q, answer: a });
+    else await BasiraAPI.knowledge.addFaq({ question: q, answer: a, sortOrder: faqCache.length });
+    closeFaqModal();
+    faqCache = await BasiraAPI.knowledge.listFaq();
+    renderFaq();
+  } catch (e) {
+    showErr('تعذّر الحفظ: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'حفظ';
+  }
+}
+
+async function deleteFaq(id) {
+  if (!confirm('حذف هذا السؤال؟')) return;
+  try {
+    await BasiraAPI.knowledge.removeFaq(id);
+    faqCache = await BasiraAPI.knowledge.listFaq();
+    renderFaq();
+  } catch (e) { showErr('تعذّر الحذف: ' + e.message); }
+}
+
+document.getElementById('kbSaveBtn').addEventListener('click', saveStoreInfo);
+document.getElementById('btnAddFaq').addEventListener('click', () => openFaqModal(null));
+document.getElementById('faqCancel').addEventListener('click', closeFaqModal);
+document.getElementById('faqSave').addEventListener('click', saveFaq);
+document.getElementById('faqModalBg').addEventListener('click', (e) => { if (e.target.id === 'faqModalBg') closeFaqModal(); });
+document.querySelector('[data-view=knowledge]').addEventListener('click', () => { if (!kbLoaded) loadKnowledge(); });
+</script>
+</body>
+</html>
