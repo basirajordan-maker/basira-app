@@ -6,64 +6,37 @@
 <title>بصيرة — ربط القنوات</title>
 <style>
   :root {
-    --bg: #12101C;
-    --panel: #1A1726;
-    --panel2: #221E30;
-    --border: #2E2A3D;
-    --border-gold: #E8B84B;
-    --text: #F2F0F7;
-    --dim: #A9A4BC;
-    --dim2: #6E6883;
-    --gold: #E8B84B;
-    --teal: #4ECDC4;
-    --green: #4FC79B;
-    --danger: #E5666F;
+    --bg: #12101C; --panel: #1A1726; --panel2: #221E30; --border: #2E2A3D;
+    --border-gold: #E8B84B; --text: #F2F0F7; --dim: #A9A4BC; --dim2: #6E6883;
+    --gold: #E8B84B; --teal: #4ECDC4; --green: #4FC79B; --danger: #E5666F;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    min-height: 100vh;
-    padding: 24px 16px;
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', Tahoma, sans-serif; min-height: 100vh; padding: 24px 16px;
     background-image: radial-gradient(circle at 20% 10%, rgba(74,28,107,0.25), transparent 45%),
                       radial-gradient(circle at 85% 90%, rgba(15,124,123,0.15), transparent 40%);
   }
   .wrap { max-width: 640px; margin: 0 auto; }
-
-  /* الرأس */
   .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
   .brand-eye { width: 40px; height: 40px; }
   .brand h1 { font-size: 22px; letter-spacing: 0.5px; }
   .brand .gold { color: var(--gold); }
   .subtitle { color: var(--dim); font-size: 13px; margin-bottom: 28px; line-height: 1.7; }
-
-  /* حالة التحميل / الأخطاء */
   .loader { text-align: center; padding: 40px; color: var(--dim); }
-  .errbox {
-    background: rgba(229,102,111,0.12); border: 1px solid rgba(229,102,111,0.4);
+  .errbox { background: rgba(229,102,111,0.12); border: 1px solid rgba(229,102,111,0.4);
     color: #ffb3b8; padding: 12px 16px; border-radius: 10px; font-size: 13px;
-    margin-bottom: 16px; display: none; line-height: 1.7;
-  }
+    margin-bottom: 16px; display: none; line-height: 1.7; word-break: break-word; }
   .errbox.show { display: block; }
-  .okbox {
-    background: rgba(79,199,155,0.12); border: 1px solid rgba(79,199,155,0.4);
+  .okbox { background: rgba(79,199,155,0.12); border: 1px solid rgba(79,199,155,0.4);
     color: #8ff0cc; padding: 12px 16px; border-radius: 10px; font-size: 13px;
-    margin-bottom: 16px; display: none; line-height: 1.7;
-  }
+    margin-bottom: 16px; display: none; line-height: 1.7; }
   .okbox.show { display: block; }
-
-  /* بطاقة القناة */
-  .ch-card {
-    background: var(--panel); border: 1px solid var(--border);
+  .ch-card { background: var(--panel); border: 1px solid var(--border);
     border-radius: 16px; padding: 18px; margin-bottom: 14px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .ch-icon {
-    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--panel2);
-  }
+    display: flex; align-items: center; gap: 14px; }
+  .ch-icon { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; background: var(--panel2); }
   .ch-icon svg { width: 26px; height: 26px; }
   .ch-body { flex: 1; min-width: 0; }
   .ch-name { font-weight: 800; font-size: 15px; }
@@ -71,60 +44,33 @@
   .ch-status.off { color: var(--dim2); }
   .ch-status.on { color: var(--green); }
   .ch-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .ch-account { font-size: 11.5px; color: var(--dim); margin-top: 2px; }
-
-  /* زر الربط */
-  .btn-connect {
-    border: none; border-radius: 10px; padding: 10px 18px;
+  .btn-connect { border: none; border-radius: 10px; padding: 10px 18px;
     font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
     background: #1877F2; color: #fff; display: flex; align-items: center; gap: 8px;
-    transition: all 0.15s; white-space: nowrap;
-  }
+    transition: all 0.15s; white-space: nowrap; text-decoration: none; }
   .btn-connect:hover { background: #1568d6; transform: translateY(-1px); }
   .btn-connect:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   .btn-connect svg { width: 16px; height: 16px; }
-
-  .btn-manage {
-    border: 1px solid var(--border); border-radius: 10px; padding: 9px 16px;
-    font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
-    background: var(--panel2); color: var(--dim); transition: all 0.15s;
-  }
-  .btn-manage:hover { border-color: var(--border-gold); color: var(--text); }
-
-  /* بطاقة الحساب المربوط (تظهر بعد الربط) */
-  .connected-account {
-    background: var(--panel2); border: 1px solid rgba(79,199,155,0.3);
+  .connected-account { background: var(--panel2); border: 1px solid rgba(79,199,155,0.3);
     border-radius: 12px; padding: 12px 14px; margin-top: 12px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .ca-avatar {
-    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-    background: var(--panel); object-fit: cover;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: var(--gold); font-size: 16px;
-  }
+    display: flex; align-items: center; gap: 12px; }
+  .ca-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: var(--panel); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--gold); font-size: 16px; }
   .ca-info { flex: 1; min-width: 0; }
   .ca-name { font-weight: 700; font-size: 13.5px; }
   .ca-meta { font-size: 11px; color: var(--dim2); margin-top: 1px; }
   .ca-badge { font-size: 10px; color: var(--green); font-weight: 700; }
-
-  /* شبكة القنوات المربوطة */
-  .connected-list { margin-top: 6px; }
   .section-label { font-size: 12px; color: var(--dim2); font-weight: 700; margin: 24px 0 12px; }
-
-  .hint {
-    background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.25);
+  .hint { background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.25);
     border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--dim);
-    line-height: 1.7; margin-bottom: 20px;
-  }
+    line-height: 1.7; margin-bottom: 20px; }
   .hint b { color: var(--gold); }
   .foot { text-align: center; margin-top: 30px; font-size: 11px; color: var(--dim2); }
   .foot a { color: var(--teal); text-decoration: none; }
-  .spinner {
-    width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
     border-top-color: #fff; border-radius: 50%; display: inline-block;
-    animation: spin 0.7s linear infinite; vertical-align: middle;
-  }
+    animation: spin 0.7s linear infinite; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -147,12 +93,10 @@
   <div id="loader" class="loader">جارٍ التحميل...</div>
 
   <div id="content" style="display:none">
-
     <div class="hint">
       <b>ربط فيسبوك وإنستغرام معاً:</b> اضغط زر «ربط مع فيسبوك» تحت، سجّل دخولك، واختر صفحاتك. بصيرة رح تربط صفحة فيسبوك (ماسنجر) وحساب إنستغرام المربوط فيها — كلهم بخطوة وحدة.
     </div>
 
-    <!-- بطاقة الربط الرئيسية -->
     <div class="ch-card">
       <div class="ch-icon">
         <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
@@ -167,54 +111,39 @@
       </button>
     </div>
 
-    <!-- القنوات المربوطة -->
     <div id="connectedSection" style="display:none">
       <div class="section-label">القنوات المربوطة</div>
-      <div class="connected-list" id="connectedList"></div>
+      <div id="connectedList"></div>
     </div>
-
   </div>
 
   <div class="foot">
     محمية بمعايير Meta · <a href="https://basirajordan-maker.github.io/basira-privacy/" target="_blank">سياسة الخصوصية</a>
   </div>
-
 </div>
 
-<!-- Supabase + Basira API -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="basira-api.js"></script>
-
-<!-- Facebook JS SDK -->
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId: '1515293589838030',
-      cookie: true,
-      xfbml: false,
-      version: 'v21.0'
-    });
-  };
-</script>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js"></script>
-
 <script>
 /* ============ إعدادات ============ */
-const SUPABASE_URL = 'https://ziywbwmsbubzelecvcrr.supabase.co';
+const SUPABASE_URL  = 'https://ziywbwmsbubzelecvcrr.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppeXdid21zYnViemVsZWN2Y3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTE0OTYsImV4cCI6MjEwMDU2NzQ5Nn0.QQ4Bx6QTNz8agNvEMyF9LmYYm_O5JLF3jg2AJ3nQJFQ';
-const FB_CONFIG_ID = '902779655750765';
-const OAUTH_FN = SUPABASE_URL + '/functions/v1/oauth-connect';
+const FB_APP_ID     = '1515293589838030';
+const FB_CONFIG_ID  = '902779655750765';
+const OAUTH_FN      = SUPABASE_URL + '/functions/v1/oauth-connect';
 
-/* أيقونات القنوات */
+/* الـ redirect_uri — لازم يطابق تماماً بين هون والـ Edge Function و Meta.
+   هو رابط هالصفحة نفسها (بدون أي query string). */
+const REDIRECT_URI  = 'https://basirajordan-maker.github.io/basira-app/connect.html';
+
 const ICONS = {
   instagram: '<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" stroke="#E1306C" stroke-width="2"/><circle cx="12" cy="12" r="4.5" stroke="#E1306C" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="#E1306C"/></svg>',
-  messenger: '<svg viewBox="0 0 24 24" fill="#0084FF"><path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.9 1.19 5.4 3.14 7.14.16.14.26.34.27.56l.05 1.78c.02.57.6.94 1.12.71l1.99-.88c.17-.07.35-.09.53-.04.91.25 1.88.39 2.9.39 5.64 0 10-4.13 10-9.7C24 6.13 17.64 2 12 2zm6 7.46l-2.93 4.64c-.47.73-1.45.92-2.15.4l-2.33-1.74a.6.6 0 00-.72 0l-3.15 2.39c-.42.32-.97-.18-.68-.62l2.93-4.64c.47-.73 1.45-.92 2.15-.4l2.33 1.74c.21.16.51.16.72 0l3.15-2.39c.42-.32.97.18.68.62z"/></svg>'
+  messenger: '<svg viewBox="0 0 24 24" fill="#0084FF"><path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.9 1.19 5.4 3.14 7.14.16.14.26.34.27.56l.05 1.78c.02.57.6.94 1.12.71l1.99-.88c.17-.07.35-.09.53-.04.91.25 1.88.39 2.9.39 5.64 0 10-4.13 10-9.7C24 6.13 17.64 2 12 2z"/></svg>'
 };
 
-function showErr(t) { const b = document.getElementById('errBox'); b.textContent = t; b.classList.add('show'); document.getElementById('okBox').classList.remove('show'); }
-function showOk(t) { const b = document.getElementById('okBox'); b.textContent = t; b.classList.add('show'); document.getElementById('errBox').classList.remove('show'); }
-function clearMsg() { document.getElementById('errBox').classList.remove('show'); document.getElementById('okBox').classList.remove('show'); }
+function showErr(t){const b=document.getElementById('errBox');b.textContent=t;b.classList.add('show');document.getElementById('okBox').classList.remove('show');}
+function showOk(t){const b=document.getElementById('okBox');b.textContent=t;b.classList.add('show');document.getElementById('errBox').classList.remove('show');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 
 let merchantId = null;
 
@@ -222,108 +151,89 @@ let merchantId = null;
 (async () => {
   BasiraAPI.init(SUPABASE_URL, SUPABASE_ANON);
   let ctx = null;
-  try { ctx = await BasiraAPI.auth.restoreSession(); } catch (_) {}
-  if (!ctx || !ctx.membership) {
-    window.location.href = 'auth.html';
-    return;
-  }
+  try { ctx = await BasiraAPI.auth.restoreSession(); } catch(_) {}
+  if (!ctx || !ctx.membership) { window.location.href = 'auth.html'; return; }
   merchantId = ctx.membership.merchant_id;
+
   document.getElementById('loader').style.display = 'none';
   document.getElementById('content').style.display = 'block';
+
+  /* هل رجعنا من فيسبوك ومعنا code؟ */
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const fbErr = params.get('error');
+
+  if (fbErr) {
+    showErr('لغيت الربط أو رفضت الصلاحيات.');
+    cleanUrl();
+  } else if (code) {
+    /* رجعنا من فيسبوك — نبعت الـ code للتبديل */
+    showOk('جارٍ إتمام الربط...');
+    await exchangeCode(code);
+    cleanUrl();
+  }
+
   await refreshChannels();
 })();
+
+/* نظّف الـ URL من الـ code بعد المعالجة */
+function cleanUrl() {
+  window.history.replaceState({}, document.title, REDIRECT_URI);
+}
+
+/* ============ زر الربط — redirect يدوي ============ */
+document.getElementById('fbConnectBtn').addEventListener('click', () => {
+  /* نبني رابط OAuth بنفسنا، بـ redirect_uri نحن نحدده — تطابق مضمون */
+  const authUrl = 'https://www.facebook.com/v21.0/dialog/oauth?' +
+    'client_id=' + FB_APP_ID +
+    '&config_id=' + FB_CONFIG_ID +
+    '&response_type=code' +
+    '&redirect_uri=' + encodeURIComponent(REDIRECT_URI) +
+    '&override_default_response_type=true';
+  window.location.href = authUrl;   // نوجّه المستخدم لفيسبوك
+});
 
 /* ============ عرض القنوات المربوطة ============ */
 async function refreshChannels() {
   try {
     const chs = await BasiraAPI.channels.list();
-    const metaChs = chs.filter(c => c.type === 'instagram' || c.type === 'messenger' || c.type === 'facebook');
-
+    const metaChs = chs.filter(c => ['instagram','messenger','facebook'].includes(c.type));
     if (metaChs.length) {
       document.getElementById('metaStatus').className = 'ch-status on';
       document.getElementById('metaStatus').innerHTML = '<span class="ch-dot"></span><span>مربوط (' + metaChs.length + ' قناة)</span>';
       document.getElementById('connectedSection').style.display = 'block';
       document.getElementById('connectedList').innerHTML = metaChs.map(c => {
-        const icon = ICONS[c.type] || ICONS.messenger;
         const typeName = c.type === 'instagram' ? 'إنستغرام' : (c.type === 'messenger' ? 'ماسنجر' : 'فيسبوك');
         const letter = (c.handle || '؟').charAt(0).toUpperCase();
         return '<div class="connected-account">' +
           '<div class="ca-avatar">' + letter + '</div>' +
-          '<div class="ca-info">' +
-            '<div class="ca-name">' + esc(c.handle || '—') + '</div>' +
-            '<div class="ca-meta">' + typeName + ' · ID: ' + esc(c.page_id || '—') + '</div>' +
-          '</div>' +
-          '<span class="ca-badge">✓ نشط</span>' +
-          '</div>';
+          '<div class="ca-info"><div class="ca-name">' + esc(c.handle||'—') + '</div>' +
+          '<div class="ca-meta">' + typeName + ' · ID: ' + esc(c.page_id||'—') + '</div></div>' +
+          '<span class="ca-badge">✓ نشط</span></div>';
       }).join('');
     } else {
       document.getElementById('connectedSection').style.display = 'none';
     }
-  } catch (e) {
-    showErr('تعذّر تحميل القنوات: ' + e.message);
-  }
+  } catch(e) { showErr('تعذّر تحميل القنوات: ' + e.message); }
 }
 
-function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
-
-/* ============ زر Facebook Login ============ */
-document.getElementById('fbConnectBtn').addEventListener('click', () => {
-  clearMsg();
-  if (typeof FB === 'undefined') {
-    showErr('لسا عم يتحمّل Facebook SDK — استنى ثانية وجرّب.');
-    return;
-  }
-  const btn = document.getElementById('fbConnectBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> جارٍ الربط...';
-
-  FB.login(function(response) {
-    if (response.authResponse && response.authResponse.code) {
-      // نجح — عنا authorization code، نبعته للـ Edge Function
-      exchangeCode(response.authResponse.code);
-    } else {
-      showErr('ما تمّ الربط — لغيت أو رفضت الصلاحيات.');
-      resetBtn();
-    }
-  }, {
-    config_id: FB_CONFIG_ID,
-    response_type: 'code',
-    override_default_response_type: true
-  });
-});
-
-function resetBtn() {
-  const btn = document.getElementById('fbConnectBtn');
-  btn.disabled = false;
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg> ربط مع فيسبوك';
-}
-
-/* ============ تبديل الـ code بتوكن (عبر Edge Function) ============ */
+/* ============ تبديل الـ code (عبر Edge Function) ============ */
 async function exchangeCode(code) {
   try {
     const res = await fetch(OAUTH_FN, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SUPABASE_ANON
-      },
-      body: JSON.stringify({ code, merchant_id: merchantId })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON },
+      body: JSON.stringify({ code, merchant_id: merchantId, redirect_uri: REDIRECT_URI })
     });
     const data = await res.json();
-
     if (data.ok) {
       const count = (data.connected || []).length;
       showOk('تمّ الربط بنجاح! ✅ ربطنا ' + count + ' قناة. بصيرة جاهزة تستقبل رسائل عملائك.');
-      await refreshChannels();
     } else {
       const msg = data.message || data.error || 'خطأ غير معروف';
       showErr('تعذّر الربط: ' + msg + (data.detail ? ' — ' + JSON.stringify(data.detail) : ''));
     }
-  } catch (e) {
-    showErr('تعذّر الاتصال بالخادم: ' + e.message);
-  } finally {
-    resetBtn();
-  }
+  } catch(e) { showErr('تعذّر الاتصال بالخادم: ' + e.message); }
 }
 </script>
 </body>
