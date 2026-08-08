@@ -382,6 +382,37 @@ body.light .conv-reply button { background: #17181a; }
 .ch-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .ch-add-btn .soon-tag { margin-inline-start: auto; font-size: 9px; color: var(--dim2); background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 20px; }
 
+/* ===== بطاقة الربط التلقائي (فيسبوك + إنستغرام) ===== */
+.fb-connect-box {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; margin: 6px 0 4px;
+}
+.fb-connect-icon {
+  width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(24,119,242,0.12);
+}
+.fb-connect-icon svg { width: 26px; height: 26px; }
+.fb-connect-body { flex: 1; min-width: 0; }
+.fb-connect-title { font-weight: 800; font-size: 14px; }
+.fb-connect-sub { font-size: 11.5px; color: var(--dim); margin-top: 2px; line-height: 1.6; }
+.fb-connect-btn {
+  border: none; border-radius: 10px; padding: 10px 16px;
+  font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+  background: #1877F2; color: #fff; display: flex; align-items: center; gap: 7px;
+  transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+}
+.fb-connect-btn:hover { background: #1568d6; transform: translateY(-1px); }
+.fb-connect-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.fb-connect-btn svg { width: 15px; height: 15px; }
+.fb-connect-msg { border-radius: 10px; font-size: 12.5px; line-height: 1.7; margin-bottom: 12px; display: none; padding: 11px 14px; word-break: break-word; }
+.fb-connect-msg.show { display: block; }
+.fb-connect-msg.ok { background: rgba(79,199,155,0.12); border: 1px solid rgba(79,199,155,0.4); color: #8ff0cc; }
+.fb-connect-msg.err { background: rgba(229,102,111,0.12); border: 1px solid rgba(229,102,111,0.4); color: #ffb3b8; }
+.fb-spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: fbspin 0.7s linear infinite; vertical-align: middle; }
+@keyframes fbspin { to { transform: rotate(360deg); } }
+
 /* ===== فريق الذكاء ===== */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 .agent-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
@@ -822,22 +853,36 @@ body.light .ag-icon { background: #f1f2f4; }
 
       <div class="settings-card">
         <h2>القنوات المربوطة</h2>
-        <div class="sc-sub">اربط حساباتك عشان بصيرة تستقبل رسائل عملائك وترد عليهم. الربط الفعلي بيتفعّل بعد إعداد المحرّك.</div>
-        <div id="chList"></div>
+        <div class="sc-sub">اربط حساباتك عشان بصيرة تستقبل رسائل عملائك وترد عليهم تلقائياً.</div>
+
+        <!-- رسائل الربط -->
+        <div id="fbConnectMsg" class="fb-connect-msg"></div>
+
+        <!-- بطاقة الربط التلقائي (فيسبوك + إنستغرام) -->
+        <div class="fb-connect-box">
+          <div class="fb-connect-icon">
+            <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+          </div>
+          <div class="fb-connect-body">
+            <div class="fb-connect-title">فيسبوك + إنستغرام</div>
+            <div class="fb-connect-sub">اربط صفحتك وحساب إنستغرام معاً بضغطة وحدة — بصيرة رح تجيب كل شي تلقائياً.</div>
+          </div>
+          <button class="fb-connect-btn" id="fbConnectBtn">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+            ربط مع فيسبوك
+          </button>
+        </div>
+
+        <div id="chList" style="margin-top:16px"></div>
+
         <div style="margin-top:16px">
-          <div class="sc-sub" style="margin-bottom:8px">أضف قناة:</div>
+          <div class="sc-sub" style="margin-bottom:8px">أو أضف قناة يدوياً:</div>
           <div class="ch-add-grid">
             <button class="ch-add-btn" data-addch="whatsapp">
               <span id="waLogo"></span> واتساب
             </button>
-            <button class="ch-add-btn" data-addch="facebook">
-              <span id="fbLogo"></span> فيسبوك
-            </button>
-            <button class="ch-add-btn" data-addch="instagram">
-              <span id="igLogo"></span> إنستغرام
-            </button>
-            <button class="ch-add-btn" data-addch="messenger">
-              <span id="msLogo"></span> ماسنجر
+            <button class="ch-add-btn" data-addch="telegram">
+              <span id="tgLogo">📱</span> تيليجرام
             </button>
           </div>
         </div>
@@ -880,9 +925,10 @@ body.light .ag-icon { background: #f1f2f4; }
 <script src="basira-api.js"></script>
 <script>
 /* ================= إعداد الربط ================= */
+window.__BASIRA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppeXdid21zYnViemVsZWN2Y3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTE0OTYsImV4cCI6MjEwMDU2NzQ5Nn0.QQ4Bx6QTNz8agNvEMyF9LmYYm_O5JLF3jg2AJ3nQJFQ';
 BasiraAPI.init(
   'https://ziywbwmsbubzelecvcrr.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppeXdid21zYnViemVsZWN2Y3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTE0OTYsImV4cCI6MjEwMDU2NzQ5Nn0.QQ4Bx6QTNz8agNvEMyF9LmYYm_O5JLF3jg2AJ3nQJFQ'
+  window.__BASIRA_ANON
 );
 
 function showErr(t) {
@@ -936,6 +982,9 @@ async function boot(ctx) {
   /* أظهر التطبيق */
   document.getElementById('loader').style.display = 'none';
   document.getElementById('app').classList.add('ready');
+
+  /* لو رجعنا من فيسبوك ومعنا code — أكمل الربط */
+  handleFbReturn();
 }
 
 /* ================= التنقّل ================= */
@@ -1927,6 +1976,86 @@ document.getElementById('chCancel').addEventListener('click', closeChModal);
 document.getElementById('chSave').addEventListener('click', saveChannel);
 document.getElementById('chModalBg').addEventListener('click', (e) => { if (e.target.id === 'chModalBg') closeChModal(); });
 document.querySelector('[data-view=settings]').addEventListener('click', () => { if (!chLoaded) loadSettings(); });
+
+/* ============================================================
+   ربط فيسبوك + إنستغرام (OAuth flow مدمج بالداشبورد)
+   ============================================================ */
+const FB_APP_ID_DASH    = '1515293589838030';
+const FB_CONFIG_ID_DASH = '902779655750765';
+const OAUTH_FN_DASH      = 'https://ziywbwmsbubzelecvcrr.supabase.co/functions/v1/oauth-connect';
+/* redirect_uri = رابط الداشبورد نفسه — لازم يطابق المسجّل بفيسبوك */
+const REDIRECT_URI_DASH  = 'https://basirajordan-maker.github.io/basira-app/dashboard.html';
+
+function fbMsg(type, text) {
+  const b = document.getElementById('fbConnectMsg');
+  if (!b) return;
+  b.className = 'fb-connect-msg show ' + type;
+  b.textContent = text;
+}
+function fbClearMsg() {
+  const b = document.getElementById('fbConnectMsg');
+  if (b) b.className = 'fb-connect-msg';
+}
+
+/* زر الربط — يوجّه المستخدم لفيسبوك (redirect يدوي، تطابق مضمون) */
+function initFbConnect() {
+  const btn = document.getElementById('fbConnectBtn');
+  if (!btn || btn._bound) return;
+  btn._bound = true;
+  btn.addEventListener('click', () => {
+    const authUrl = 'https://www.facebook.com/v21.0/dialog/oauth?' +
+      'client_id=' + FB_APP_ID_DASH +
+      '&config_id=' + FB_CONFIG_ID_DASH +
+      '&response_type=code' +
+      '&redirect_uri=' + encodeURIComponent(REDIRECT_URI_DASH) +
+      '&override_default_response_type=true';
+    window.location.href = authUrl;
+  });
+}
+
+/* بعد الرجوع من فيسبوك — نلتقط الـ code من الـ URL ونبعته للتبديل */
+async function handleFbReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const code  = params.get('code');
+  const fbErr = params.get('error');
+  if (!code && !fbErr) return;
+
+  /* نظّف الـ URL فوراً */
+  window.history.replaceState({}, document.title, REDIRECT_URI_DASH);
+
+  /* افتح قسم الإعدادات عشان يشوف النتيجة */
+  const settingsNav = document.querySelector('[data-view=settings]');
+  if (settingsNav) settingsNav.click();
+
+  if (fbErr) { fbMsg('err', 'لغيت الربط أو رفضت الصلاحيات.'); return; }
+
+  fbMsg('ok', 'جارٍ إتمام الربط...');
+  try {
+    const merchantId = (BasiraAPI.auth.context()?.membership?.merchant_id) || null;
+    const res = await fetch(OAUTH_FN_DASH, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + (window.__BASIRA_ANON || '')
+      },
+      body: JSON.stringify({ code, merchant_id: merchantId, redirect_uri: REDIRECT_URI_DASH })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      const count = (data.connected || []).length;
+      fbMsg('ok', 'تمّ الربط بنجاح! ✅ ربطنا ' + count + ' قناة. بصيرة جاهزة تستقبل رسائل عملائك.');
+      if (chLoaded) await loadSettings();
+    } else {
+      const msg = data.message || data.error || 'خطأ غير معروف';
+      fbMsg('err', 'تعذّر الربط: ' + msg + (data.detail ? ' — ' + JSON.stringify(data.detail) : ''));
+    }
+  } catch (e) {
+    fbMsg('err', 'تعذّر الاتصال بالخادم: ' + e.message);
+  }
+}
+
+/* اربط الزر عند فتح الإعدادات */
+document.querySelector('[data-view=settings]').addEventListener('click', initFbConnect);
 
 /* ============================================================
    فريق الذكاء — موظفون بأدوار (self-service)
